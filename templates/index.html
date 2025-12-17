@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PayloadWeaver</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Jacquarda+Bastarda+9&family=Spicy+Rice&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Jacquarda+Bastarda+9&family=Jaro:opsz@6..72&family=Spicy+Rice&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300&family=Itim&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .outerContainer {
+        margin: 0;
+        font-family: "Crimson Text", serif;
+        background: #000; /* Dark background */
+        color: #fff;
+        font-weight: 700;
+        font-style: normal;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .crimson-text-bold {
+        font-family: "Crimson Text", serif;
+        font-weight: 700;
+        font-style: normal;
+      }
+
+      .container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+
+        background: #111; /* Slightly lighter dark background */
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      .left-section,
+      .right-section {
+        height: 100%;
+        padding: 20px;
+      }
+
+      .left-section {
+        flex: 60%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: black;
+        padding: 0 6rem;
+      }
+
+      .right-section {
+        flex: 40%;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+      }
+
+      .title {
+        font-size: 6.5rem;
+        font-weight: bold;
+        color:#00416A;
+        margin-bottom: 1.5rem;
+        font-family: "Exwayer", sans-serif;
+      }
+
+      .subtitles {
+        font-size: 1.7rem;
+        font-weight: 500;
+        color: #73C2FB; /* Light pink color */
+        text-align: center;
+        height: 30px; /* Fixed height for subtitles */
+        position: relative;
+        width: 100%; /* Ensure subtitles span the width of the container */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .subtitles p {
+        opacity: 0;
+        position: absolute;
+        transition: opacity 1s ease-in-out;
+        font-family: "Spicy Rice", serif;
+        font-weight: 400;
+        font-style: normal;
+      }
+
+      .subtitles p.active {
+        opacity: 1;
+      }
+      form{
+        width: 100%;
+      }
+      .upper {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .lower{
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        margin-top: 2rem;
+      }
+
+      .lower button{
+        margin-right: 1rem;
+      }
+
+      form input[type="text"],
+      form select {
+        width: 50%;
+        padding: 15px;
+        font-size: 1.1rem;
+        border-radius: 5px;
+        border: none;
+        outline: none;
+      }
+
+      form button {
+        background-color:#00416A;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      form button:hover {
+        background-color: #7393B3;
+      }
+
+      .log-container {
+        margin: 40px auto 0;
+        width: 80%;
+        max-width: 600px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background: #000; /* Darker background */
+        padding: 20px;
+
+        color: #fff;
+        font-size: 1rem;
+      }
+
+      .right-section video {
+        width: 100%;
+        height: 100%; /* Make the video cover the full height */
+        object-fit: cover; /* Ensures the video covers the area without distortion */
+        border-radius: 10px;
+      }
+
+      #typewriter-title::after {
+        content: "|"; /* Cursor character */
+        font-weight: bold;
+        color: #00416A; /* Matches the orange title color */
+        animation: blink 0.6s step-start infinite;
+      }
+
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      @font-face {
+        font-family: "Exwayer";
+        src: url("/static/fonts/EXWAYER.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background: #111; /* Dark background for navbar */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+      }
+
+      .logo {
+        font-size: 2.5rem;
+        color: #5f6880; /* Matching button orange for consistency */
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Crimson Text", serif;
+      }
+
+      .navContent {
+        display: flex;
+        gap: 2rem;
+        font-size: 1.2rem;
+        list-style: none;
+        padding-right: 45px;
+        justify-content: flex-end; /* Aligns icons to the right */
+      }
+
+      .navContent a {
+        text-decoration: none;
+        color: #fff;
+        transition: color 0.3s ease-in-out;
+      }
+
+      .navContent a:hover {
+        color: #f57326; /* Consistent orange hover effect */
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .navContent {
+          font-size: 1rem;
+          gap: 1rem;
+        }
+        .logo {
+          font-size: 2rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .outerContainer{
+          padding-top: 40px;
+          height:initial;
+        }
+        .upper{
+          flex-direction: column;
+        }
+        form input[type="text"], form select{
+          width: initial;
+          padding: 9px;
+          font-size: 0.8rem;
+        }
+
+
+        form button{
+          padding: 8px 30px;
+          font-size: 0.8rem;
+        }
+
+        .lower div{
+          gap: 0.4rem;display: flex;margin-top: 10px;flex-direction: column;
+        }
+
+        .log-container{display: none;}
+        .container{
+          overflow:initial;
+        }
+
+        .left-section{
+          padding: 20px;
+        }
+
+        .title{
+          font-size:1.5rem;
+        }
+
+        .subtitles p{
+          font-size:17px;
+        }
+
+        .right-section{
+          display:none;
+        }
+
+
+
+        .logo {
+          font-size: 1.8rem;
+        }
+        body{
+          background: black;
+        }
+        
+      }
+      .log-container{
+        display:flex;
+        justify-content:center;
+        font-size:2rem;
+        padding:0.5rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="logo">
+        <i class="fa-solid fa-shield"></i>
+      </div>
+      <div class="navContent">
+        <a href="/"
+          ><div><i class="fa-solid fa-house"></i></div
+        ></a>
+        <a href="/home"
+          ><div><i class="fa-brands fa-xing"></i></div
+        ></a>
+        <a href="/dashboard"
+          ><div><i class="fa-solid fa-chart-line"></i></div
+        ></a>
+        {% if session['logged_in'] %}
+        <a href="/logout"
+          ><div><i class="fa-solid fa-sign-out-alt"></i> Logout</div></a
+        >
+        {% else %}
+        <a href="/login"
+          ><div><i class="fa-solid fa-sign-in-alt"></i> Login</div></a
+        >
+        {% endif %}
+      </div>
+    </div>
+    <div class="outerContainer">
+      <div class="container">
+        <div class="left-section">
+          <h1 class="title" id="typewriter-title"></h1>
+          <div class="subtitles">
+            <p class="active">We Find the Holes Before Hackers Do.</p>
+            <p>Vulnerability? Not on Our Watch!</p>
+            <p>We Spot the Bugs, So You Don’t Get Bugged.</p>
+          </div>
+
+          <form action="/start_scan" method="POST">
+
+            <div class = "upper">
+              <input
+              type="text"
+              id="target_url"
+              name="target_url"
+              placeholder="Enter Target URL (e.g., example.com)"
+              required
+            />
+           
+            </div>
+            
+          <div class = "lower">
+            <div style="margin-top: 10px;">
+              <button type="submit" name="scan_type" value="quick" onclick = "scanBtn()">Quick Scan</button>
+              <button type="submit" name="scan_type" value="regular" onclick = "scanBtn()">Regular Scan</button>
+              <button type="submit" name="scan_type" value="deep" onclick = "scanBtn()">Deep Scan</button>
+            </div>
+          </div>
+          </form>
+          
+
+          <div class="log-container" id="log-container"></div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+          <video
+            src="{{ url_for('static', filename='bg2.mp4') }}"
+            autoplay
+            loop
+            muted
+          ></video>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Subtitles Transition
+      const subtitles = document.querySelectorAll(".subtitles p");
+      let index = 0;
+
+      setInterval(() => {
+        subtitles.forEach((subtitle, i) => {
+          subtitle.classList.toggle("active", i === index);
+        });
+        index = (index + 1) % subtitles.length;
+      }, 3000); // Change every 3 seconds
+
+      // Logs Auto-Update
+      const eventSource = new EventSource("/logs");
+      eventSource.onmessage = function (event) {
+        const logContainer = document.getElementById("log-container");
+        const logMessage = document.createElement("p");
+        logMessage.textContent = event.data;
+        logContainer.appendChild(logMessage);
+        logContainer.scrollTop = logContainer.scrollHeight; // Auto-scroll to bottom
+      };
+
+      const titleElement = document.getElementById("typewriter-title");
+      const titleText = "CyberXipher"; // Text to display
+      let charIndex = 0;
+      let isDeleting = false; // Tracks whether we are typing or deleting
+
+      function typeTitle() {
+        if (!isDeleting && charIndex <= titleText.length) {
+          // Typing the text
+          titleElement.textContent = titleText.substring(0, charIndex);
+          charIndex++;
+          setTimeout(typeTitle, 150); // Adjust typing speed (150ms per character)
+        } else if (isDeleting && charIndex >= 0) {
+          // Deleting the text
+          titleElement.textContent = titleText.substring(0, charIndex);
+          charIndex--;
+          setTimeout(typeTitle, 100); // Adjust deleting speed (100ms per character)
+        } else if (charIndex < 0) {
+          // Finished deleting, start typing again
+          isDeleting = false;
+          setTimeout(typeTitle, 500); // Short pause before restarting (500ms)
+        } else {
+          // Finished typing, start deleting
+          isDeleting = true;
+          setTimeout(typeTitle, 500); // Short pause before deleting (500ms)
+        }
+      }
+
+      // Start the typewriting effect when the page loads
+      document.addEventListener("DOMContentLoaded", () => {
+        typeTitle();
+      });
+
+      function scanBtn(){
+        const logContainer = document.getElementById('log-container');
+        logContainer.innerText = "Scanning..."
+      }
+    </script>
+  </body>
+</html>

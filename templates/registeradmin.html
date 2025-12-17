@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - PayloadWeaver</title>
+    <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+    rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: cursive, 'sans-serif';
+        margin: 0;
+        padding: 0;
+        background-color: #000; /* Black background */
+        color: #ffffff; /* White text */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .register-container {
+        background-color: #1a1a1a; /* Dark gray container */
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);
+        width: 100%;
+        max-width: 400px;
+        transform: scale(1.15);
+      }
+
+      .register-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #ff6700; /* Orange color for heading */
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #ffa500; /* Lighter orange for labels */
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 94%;
+        padding: 10px;
+        border: 1px solid #ff6700; /* Orange border for inputs */
+        border-radius: 5px;
+        background-color: #333333; /* Dark input background */
+        color: #ffffff; /* White input text */
+        font-size: 16px;
+      }
+
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background: linear-gradient(45deg, #ff6700, #6a0dad); /* Orange to purple gradient */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background: linear-gradient(45deg, #6a0dad, #ff6700); /* Reverse gradient on hover */
+      }
+
+      .login-link {
+        margin-top: 10px;
+        text-align: center;
+      }
+
+      .login-link a {
+        color: rgb(255, 150, 234);
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .login-link a:hover {
+        color: #ff6700; /* Orange on hover */
+        text-decoration: underline;
+      }
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background: #111; /* Dark background for navbar */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+      }
+
+      .logo {
+        font-size: 2.5rem;
+        color: #5f6880; /* Matching button orange for consistency */
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Crimson Text", serif;
+      }
+
+      .navContent {
+        display: flex;
+        gap: 2rem;
+        font-size: 1.2rem;
+        list-style: none;
+        padding-right: 45px;
+        justify-content: flex-end; /* Aligns icons to the right */
+      }
+
+      .navContent a {
+        text-decoration: none;
+        color: #fff;
+        transition: color 0.3s ease-in-out;
+      }
+
+      .navContent a:hover {
+        color: #f57326; /* Consistent orange hover effect */
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .navContent {
+          font-size: 1rem;
+          gap: 1rem;
+        }
+        .logo {
+          font-size: 2rem;
+        }
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+        <div class="logo">
+          <i class="fa-solid fa-shield"></i>
+        </div>
+        <div class="navContent">
+          <a href="/"
+            ><div><i class="fa-solid fa-house"></i></div
+          ></a>
+          <a href="/home"
+            ><div><i class="fa-brands fa-xing"></i></div
+          ></a>
+          <a href="/dashboard"
+            ><div><i class="fa-solid fa-chart-line"></i></div
+          ></a>
+          {% if session['logged_in'] %}
+          <a href="/logout"
+            ><div><i class="fa-solid fa-sign-out-alt"></i> Logout</div></a
+          >
+          {% else %}
+          <a href="/login"
+            ><div><i class="fa-solid fa-sign-in-alt"></i> Login</div></a
+          >
+          {% endif %}
+        </div>
+      </div>
+        <div class="register-container">
+        <h1>Register</h1>
+        <form action="/registeradmin" method="POST">
+            <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group">
+            <label for="email">Email ID</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <div class="form-group">
+            <label for="role">Register As</label>
+            <select id="role" name="role" required>
+                <option value="tester">Tester</option>
+                <option value="manager">Admin</option>
+            </select>
+            </div>
+            <button type="submit" class="btn">Register</button>
+        </form>
+        </div>
+  </body>
+</html>

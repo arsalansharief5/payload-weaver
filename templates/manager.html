@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --bg-darker: #0a0a0a;
+            --text-light: #e0e0e0;
+            --accent-orange: #f57326;
+            --accent-dark-red: #5d0606;
+        }
+
+        @font-face {
+            font-family: "Themiru";
+            src: url("/static/fonts/Themiru.ttf") format("truetype");
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: cursive !important;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        /* Navbar styling */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+            background: #111;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 2.8rem;
+            color: #f57326;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: "Themiru", serif;
+        }
+
+        .navContent {
+            display: flex;
+            gap: 2.5rem;
+            font-size: 1.1rem;
+            list-style: none;
+            padding-right: 45px;
+            justify-content: flex-end;
+        }
+
+        .navContent a {
+            text-decoration: none;
+            color: #fff;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .navContent a:hover {
+            color: var(--accent-orange);
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            position: fixed;
+            top: 160px; /* Below the navbar */
+            left: 0;
+            width: 250px;
+            height: calc(100vh - 60px); /* Full height minus navbar */
+            background-color: var(--bg-darker);
+            padding: 1.5rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar .logo {
+            font-size: 2.4rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: rgba(245, 115, 38, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .content {
+            margin-left: 270px; /* Width of the sidebar + some gap */
+            padding: 2rem;
+        }
+
+        .table-container {
+            background-color: #222;
+            border-radius: 10px;
+            padding: 8rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .table-title {
+            margin-bottom: 2rem;
+            color: var(--accent-orange);
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--accent-orange);
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .content {
+                margin-left: 210px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+        }
+
+        .manager-info {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .manager-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 0.5rem;
+            border: 2px solid var(--accent-orange);
+            object-fit: cover;
+        }
+        
+        .manager-name {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+        .action-link{
+            background: white;
+            color: black;
+            padding: .5rem;
+            text-decoration: none;
+            transition: .3s all ease-in;
+            font-weight: bold;
+            border-radius: 12px;
+    }
+
+        .action-link:hover{
+            background: black;
+            color: white;
+        }
+        
+    </style>
+    
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-shield"></i>
+            Admin Dashboard
+        </div>
+        <div class="navContent">
+            <a href="/"><i class="fa-solid fa-house"></i></a>
+            <a href="/home"><i class="fa-brands fa-xing"></i></a>
+            <a href="/dashboard"><i class="fa-solid fa-chart-line"></i></a>
+            <a href = "/payloads"><i class="fa-solid fa-hexagon-nodes"></i></a>
+            {% if session['logged_in'] %}
+            <a href="/logout"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+            {% else %}
+            <a href="/login"><i class="fa-solid fa-sign-in-alt"></i> Login</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="logo">Admin</div>
+        <div class="manager-info">
+            <img src="{{ url_for('static', filename='avatar.png') }}" alt="Admin Avatar" class="manager-avatar">
+            <p class="manager-name">{{current_user.name}}</p>
+        </div>
+        <ul>
+            <li><a href="/dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="/users"><i class="fa-solid fa-user"></i>Manage Users</a></li>
+            <li><a href="/settings"><i class="fa-solid fa-cogs"></i> Settings</a></li>
+            <li><a href="/reports"><i class="fa-solid fa-file-alt"></i> Reports</a></li>
+            <li><a href="/help"><i class="fa-solid fa-life-ring"></i> Help</a></li>
+        </ul>
+    </div>
+    
+    <h1>Manager Dashboard</h1>
+
+    <div id="charts-container">
+        <div id="vulnerability-pie-chart"></div>
+        <div id="vulnerability-bar-chart"></div>
+        <div id="scan-duration-line-chart"></div>
+    </div>
+
+    <script>
+        // Prepare data for charts
+        var vulnerability_counts = [{{ current_user.scanned_urls.high_count|safe }}, {{ current_user.scanned_urls.medium_count|safe }}, {{ current_user.scanned_urls.low_count|safe }}];
+        var vulnerability_labels = ['High', 'Medium', 'Low'];
+
+        // Pie Chart
+        var pie_chart_data = [{
+            labels: vulnerability_labels,
+            values: vulnerability_counts,
+            type: 'pie'
+        }];
+
+        // Bar Chart
+        var bar_chart_data = [{
+            x: vulnerability_labels,
+            y: vulnerability_counts,
+            type: 'bar'
+        }];
+
+        // Assuming you have scan durations for each URL
+        var scan_durations = [{{ scan_duration_1|safe }}, {{ scan_duration_2|safe }}, ...];
+        var scan_dates = ['2023-11-01', '2023-11-02', ...];
+
+        // Line Chart
+        var line_chart_data = [{
+            x: scan_dates,
+            y: scan_durations,
+            type: 'line'
+        }];
+
+        // Render charts
+        Plotly.newPlot('vulnerability-pie-chart', pie_chart_data);
+        Plotly.newPlot('vulnerability-bar-chart', bar_chart_data);
+        Plotly.newPlot('scan-duration-line-chart', line_chart_data);
+    </script>
+
+    
+</body>
+</html>

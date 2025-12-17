@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - CrashXipher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Spicy+Rice&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", sans-serif;
+        background: #000;
+        color: #fff;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px;
+        background: #111;
+        padding-top: 100px;
+        min-height: 100vh;
+      }
+
+      .heading {
+        margin-top: 5px;
+      }
+
+      h2 {
+        font-size: 60px;
+        color: #00416A;
+        font-weight: 700;
+        font-family: "Crimson Text", serif;
+        font-style: normal;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background: #111;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 200;
+      }
+
+      .logo {
+        font-size: 2.5rem;
+        color: #3b3e46;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Crimson Text", serif;
+      }
+
+      .navContent {
+        display: flex;
+        gap: 2rem;
+        font-size: 1.2rem;
+        list-style: none;
+        padding-right: 45px;
+        justify-content: flex-end;
+      }
+
+      .navContent a {
+        text-decoration: none;
+        color: #fff;
+        transition: color 0.3s ease-in-out;
+      }
+
+      .navContent a:hover {
+        color: #f57326;
+      }
+
+      .btn {
+        display: inline-block;
+        color: #00416A;
+        padding: 8px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background 0.3s ease, color 0.3s ease;
+        background: transparent;
+        outline: none;
+        border: 2px solid #00416A;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background: #00416A;
+        color: white;
+      }
+
+      .scan-history {
+        margin-top: 20px;
+        width: 90%;
+        border-radius: 10px;
+        background: #111;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      .scan-history table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 16px;
+      }
+
+      .scan-history th,
+      .scan-history td {
+        padding: 20px;
+        text-align: center;
+        border: 1px solid #333;
+
+      }
+
+      .scan-history th {
+        background-color: #00416A;
+        color: #fff;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .scan-history tr:nth-child(even) {
+        background-color: #222;
+      }
+
+      .scan-history tr:hover {
+        background-color: #00416A;
+        color: #fff;
+      }
+
+      .scan-history td {
+        background-color: #111;
+        color: #ccc;
+      }
+
+      .scan-history h3 {
+        font-size: 2rem;
+        padding-bottom: 2rem;
+        text-align: center;
+        color: rgb(255, 255, 255);
+        letter-spacing: 2px
+      }
+
+      .stats-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 40px;
+        width: 90%;
+      }
+
+      .stats-container .image-container {
+        width: 48%;
+        overflow: hidden;
+        height: 500px;
+        border-radius: 10px;
+      }
+
+      .image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .stats-container .chart-container {
+        width: 48%;
+        padding: 10px;
+        background: #111;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      canvas {
+        width: 100% !important;
+        height: 392px !important;
+        padding: 20px;
+      }
+
+      .pagination-buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      #prevBtn i {
+        transform: rotate(90deg);
+      }
+
+      #nextBtn i {
+        transform: rotate(270deg);
+      }
+
+      @media (max-width: 480px) {
+        .scan-history th,
+        .scan-history td {
+          padding: 5px;
+        }
+
+        .scan-history table {
+          font-size: 12px;
+        }
+
+        .stats-container {
+          display: none;
+        }
+
+        .heading {
+          padding-top: 4rem;
+          font-size: 1.5em;
+        }
+
+        .scan-history h3 {
+          font-size: 1rem;
+        }
+
+        .navbar {
+          padding: 5px 0px;
+        }
+
+        .navContent {
+          gap: 1rem;
+          padding: 22px;
+        }
+
+        body {
+          overflow: initial;
+        }
+      }
+    </style>    
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="logo">
+        <i class="fa-solid fa-shield"></i>
+      </div>
+      <div class="navContent">
+        <a href="/"><div><i class="fa-solid fa-house"></i></div></a>
+        <a href="/home"><div><i class="fa-brands fa-xing"></i></div></a>
+        <a href="/dashboard"><div><i class="fa-solid fa-chart-line"></i></div></a>
+        {% if session['logged_in'] %}
+        <a href="/logout"><div><i class="fa-solid fa-sign-out-alt"></i> Logout</div></a>
+        {% else %}
+        <a href="/login"><div><i class="fa-solid fa-sign-in-alt"></i> Login</div></a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="container">
+      <h2 class="heading">Welcome, {{ current_user.name }}</h2>
+      <div class="scan-history">
+        <h3>Your Scan History</h3>
+        <table class="table-container">
+          <thead>
+            <tr>
+              <th>Target URL</th>
+              <th>Attack Type</th>
+              <th>Scan Duration</th>
+              <th>High</th>
+              <th>Medium</th>
+              <th>Low</th>
+            </tr>
+          </thead>
+          <tbody id="scanTableBody">
+            {% for scan in current_user.scanned_urls %}
+            <tr class="scan-row">
+              <td>{{ scan.target_url }}</td>
+              <td>{{ scan.attack_type }}</td>
+              <td>{{ scan.scan_duration }} seconds</td>
+              <td>{{ scan.high_count }}</td>
+              <td>{{ scan.medium_count }}</td>
+              <td>{{ scan.low_count }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="pagination-container">
+          <div class="pagination-buttons">
+            <button id="prevBtn" class="btn" onclick="paginate(-1)">
+              <i class="fa-solid fa-v"></i>
+            </button>
+            <button id="nextBtn" class="btn" onclick="paginate(1)">
+              <i class="fa-solid fa-v"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-container">
+        <div class="image-container">
+          <img src="{{ url_for('static', filename='graph1.jpg') }}" alt="Your Image" style="width: 100%; border-radius: 10px"/>
+        </div>
+        <div class="chart-container">
+          <canvas id="severityChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var ctx = document.getElementById('severityChart').getContext('2d');
+      const scannedUrls = {{ scanned_urls|tojson }};
+      let low = 0;
+      let high = 0;
+      let medium = 0;
+
+      scannedUrls.map((U) => {
+        if (U.low_count) low += U.low_count;
+        if (U.high_count) high += U.high_count;
+        if (U.medium_count) medium += U.medium_count;
+      });
+
+      var severityChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Medium', 'Low', 'High'],
+          datasets: [{
+            label: 'Security Issues by Severity',
+            data: [medium, low, high],
+            backgroundColor: ['rgba(54, 162, 235, 0.8)'],
+            borderColor: ['#2185d0'],
+            borderWidth: 2,
+            hoverBackgroundColor: ['rgba(54, 162, 235, 0.95)'],
+            hoverBorderWidth: 3,
+            hoverBorderColor: ['#1678c2'],
+            barThickness: 40,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: {
+                color: '#ffffff',
+                font: {
+                  size: 18,
+                  weight: 'bold',
+                  family: "'Inter', sans-serif"
+                },
+                padding: 20
+              }
+            },
+            title: {
+              display: true,
+              text: 'Security Vulnerability Distribution',
+              color: '#ffffff',
+              font: {
+                size: 24,
+                weight: 'bold',
+                family: "'Inter', sans-serif"
+              },
+              padding: {
+                top: 20,
+                bottom: 20
+              }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)',
+                lineWidth: 1
+              },
+              ticks: {
+                color: '#ffffff',
+                font: {
+                  size: 16,
+                  weight: 'bold'
+                },
+                padding: 10
+              }
+            },
+            y: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: '#ffffff',
+                font: {
+                  size: 16,
+                  weight: 'bold'
+                },
+                padding: 10
+              }
+            }
+          }
+        }
+      });
+
+      var currentPage = 0;
+      var rowsPerPage = 3;
+      var rows = document.querySelectorAll('.scan-row');
+
+      function paginate(direction) {
+        currentPage += direction;
+        showRows();
+      }
+
+      function showRows() {
+        var start = currentPage * rowsPerPage;
+        var end = start + rowsPerPage;
+
+        rows.forEach((row, index) => {
+          if (index >= start && index < end) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+
+        document.getElementById('prevBtn').disabled = currentPage === 0;
+        document.getElementById('nextBtn').disabled = end >= rows.length;
+      }
+
+      showRows();
+    </script>
+  </body>
+</html>

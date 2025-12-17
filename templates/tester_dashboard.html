@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tester Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Changed to pitch black */
+            color: #e5e7eb;
+            padding-top: 70px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+            background: #1f2937;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .navContent {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .navContent a {
+            text-decoration: none;
+            color: #9ca3af;
+            font-size: 1.1rem;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .navContent a:hover {
+            color: #60a5fa;
+        }
+
+        /* Main Content */
+        h1 {
+            text-align: center;
+            color: #60a5fa;
+            margin: 40px 0;
+            font-weight: 600;
+            font-size: 2rem;
+        }
+
+        /* Table Styles */
+        table {
+            width: 90%;
+            margin: auto; /* Changed to auto for vertical centering */
+            border-collapse: collapse;
+            background: #1f2937;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 1.1rem; /* Increased font size */
+        }
+
+        table thead {
+            background: #374151;
+            color: #60a5fa;
+        }
+
+        table th, table td {
+            padding: 20px; /* Increased padding for larger text */
+            text-align: left;
+            border-bottom: 1px solid #374151;
+        }
+
+        table th {
+            font-weight: 600;
+            font-size: 1.2rem; /* Slightly larger headers */
+        }
+
+        table tr:hover {
+            background: #283548;
+        }
+
+        /* Center table container */
+        .table-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        /* Attack Type Colors */
+        .xss {
+            background-color: #dc2626;
+            color: #fff;
+            padding: 6px 12px; /* Increased padding */
+            border-radius: 4px;
+            font-size: 1rem; /* Increased font size */
+            font-weight: 500;
+        }
+
+        .sql {
+            background-color: #3b82f6;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .command-injection {
+            background-color: #7c3aed;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Form Styles */
+        form {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        select, button {
+            padding: 10px 14px; /* Increased padding */
+            border: 1px solid #374151;
+            border-radius: 6px;
+            font-size: 1rem; /* Increased font size */
+            font-family: 'Inter', sans-serif;
+        }
+
+        select {
+            background: #374151;
+            color: #e5e7eb;
+            min-width: 160px; /* Slightly wider for larger text */
+        }
+
+        select option {
+            background: #374151;
+            color: #e5e7eb;
+        }
+
+        button {
+            background: #3b82f6;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        /* Progress Slider */
+        .progress-container {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px; /* Slightly taller */
+            border-radius: 4px;
+            background: #374151;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .progress-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px; /* Larger thumb */
+            width: 20px;
+            background: #3b82f6;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Ensure text remains visible during webfont load */
+        .font-loading {
+            font-display: swap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-shield"></i> Tester Dashboard
+        </div>
+        <ul class="navContent">
+            <li><a href="/"><i class="fa-solid fa-house"></i></a></li>
+            <li><a href="/home"><i class="fa-brands fa-xing"></i></a></li>
+            <li><a href="/dashboard"><i class="fa-solid fa-chart-line"></i></a></li>
+            {% if session['logged_in'] %}
+            <li><a href="/logout"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
+            {% else %}
+            <li><a href="/login"><i class="fa-solid fa-sign-in-alt"></i> Login</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="table-container">
+        <h1>Assignment Dashboard</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Target URL</th>
+                    <th>Attack Type</th>
+                    <th>Vulnerability Count</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                    <th>Download Report</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                <tr>
+                    <td>{{ assignment.scanned_url.target_url }}</td>
+                    <td>
+                        {% if assignment.scanned_url.attack_type == 'XSS' %}
+                            <span class="xss">{{ assignment.scanned_url.attack_type }}</span>
+                        {% elif assignment.scanned_url.attack_type == 'SQL' %}
+                            <span class="sql">{{ assignment.scanned_url.attack_type }}</span>
+                        {% elif assignment.scanned_url.attack_type == 'Command Injection' %}
+                            <span class="command-injection">{{ assignment.scanned_url.attack_type }}</span>
+                        {% else %}
+                            {{ assignment.scanned_url.attack_type }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% set total_vulnerabilities = assignment.scanned_url.high_count + assignment.scanned_url.medium_count + assignment.scanned_url.low_count %}
+                        {{ total_vulnerabilities }}
+                    </td> 
+                    <td>{{ assignment.status }}</td>
+                    <td>
+                        <input 
+                            type="range" 
+                            class="progress-bar" 
+                            min="0" 
+                            max="100" 
+                            value="{% if assignment.status == 'under review' %}0{% elif assignment.status == 'in progress' %}50{% elif assignment.status == 'completed' %}100{% endif %}" 
+                            disabled
+                        >
+                    </td>
+                    <td>
+                        {% if assignment.scanned_url.report_path %}
+                            <a href="{{ assignment.scanned_url.report_path }}" download>
+                                <button>Download Report</button>
+                            </a>
+                        {% else %}
+                            No report available
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('update_status', assignment_id=assignment.id) }}">
+                            <select name="status">
+                                <option value="under review" {% if assignment.status == 'under review' %}selected{% endif %}>Under Review</option>
+                                <option value="in progress" {% if assignment.status == 'in progress' %}selected{% endif %}>In Progress</option>
+                                <option value="completed" {% if assignment.status == 'completed' %}selected{% endif %}>Completed</option>
+                            </select>
+                            <button type="submit">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

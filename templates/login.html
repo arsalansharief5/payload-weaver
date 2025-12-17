@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Themed Login Page</title>
+    <style>
+        body {
+            font-family: cursive,'sans-serif';
+            margin: 0;
+            padding: 0;
+            background-color: #000; /* Black background */
+            color: #ffffff; /* White text */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: #1a1a1a; /* Dark gray container */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);
+            width: 100%;
+            max-width: 400px;
+            transform: scale(1.15);
+        }
+        
+        .login-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ff6700; /* Orange color for heading */
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #ffa500; /* Lighter orange for labels */
+        }
+
+        .form-group input {
+            width: 94%;
+            padding: 10px;
+            border: 1px solid #ff6700; /* Orange border for inputs */
+            border-radius: 5px;
+            background-color: #333333; /* Dark input background */
+            color: #ffffff; /* White input text */
+            font-size: 16px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(45deg, #ff6700, #6a0dad); /* Orange to purple gradient */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #6a0dad, #ff6700); /* Reverse gradient on hover */
+        }
+
+        .register-link {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .register-link a {
+            color: rgb(255, 150, 234);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .register-link a:hover {
+            color: #ff6700; /* Orange on hover */
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>
+        <form action="/login" method="POST">
+            <div class="form-group">
+                <label for="email">Email ID</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <div class="register-link">
+            <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+

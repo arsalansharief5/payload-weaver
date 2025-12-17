@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Crashcipher</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300&family=Itim&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .crimson-text-bold {
+            font-family: "Crimson Text", serif;
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        /* Background video styling */
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        /* Centered content */
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: white;
+            
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.4); /* Optional overlay */
+        }
+
+        h1 {
+            font-size: 7rem; /* Increased font size */
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .itim-regular {
+            font-family: "Itim", cursive;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        /* Oval Button Styling */
+        .btn {
+            margin-top: 35px;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            /* background-color: #007bff; Blue color */
+            color: white;
+            border: 2px solid transparent;
+            border-radius: 30px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+            /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); */
+            background-color: #000;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 15px rgba(255, 0, 255, 0.4);
+        }
+
+
+        
+        
+
+        .btn:hover::before {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            background-color: #000;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 15px rgba(255, 0, 255, 0.4);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 5px rgba(255, 0, 255, 0.2);
+        }
+
+        @media(max-width: 468px){
+            .content h1{
+                font-size: 1rem;
+            }
+
+            .btn{
+                font-size: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Video -->
+    <video class="video-background" autoplay muted loop>
+        <source src="{{ url_for('static', filename='homebg.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Centered Content -->
+    <div class="content crimson-text-bold ">
+        <h1>Welcome to PayloadWeaver</h1>
+        <a style = "text-decoration: none" class="btn itim-regular" href="/home">Get Started</a>
+    </div>
+
+    <script>
+        function getStarted() {
+            window.location.href = "http://127.0.0.1:5000/home"
+        }
+    </script>
+
+</body>
+</html>

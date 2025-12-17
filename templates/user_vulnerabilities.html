@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --bg-gray: #1f1f1f;
+            --text-light: #e0e0e0;
+            --blue-accent: #3a7bd5;
+            --blue-hover: #2a5f9b;
+            --table-header-bg: #273746;
+            --border-color: rgba(255,255,255,0.1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: var(--bg-gray);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0;
+            width: calc(100% - 40px);
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            font-size: 1.8rem;
+            color: var(--blue-accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+
+        .navbar .navContent {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .navbar .navContent a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar .navContent a:hover {
+            color: #f57326;
+        }
+
+        .content {
+            padding: 100px 20px 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .table-container {
+            background-color: var(--bg-gray);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .table-title {
+            margin-bottom: 25px;
+            color: var(--blue-accent);
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 20px; /* Increased padding */
+            text-align: center;
+            border: 1px solid var(--border-color);
+            border-left: none;
+            border-top: none;
+            font-size: 1.1rem;
+        }
+
+        th {
+            background-color: var(--table-header-bg);
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            border-bottom: 2px solid var(--blue-accent);
+        }
+
+        td {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        tr:nth-child(even) td {
+            background-color: rgba(58, 123, 213, 0.05);
+        }
+
+        tr:hover td {
+            background-color: rgba(58, 123, 213, 0.15);
+            transition: background-color 0.3s ease;
+        }
+
+        .action-link {
+            background-color: var(--blue-accent);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .action-link:hover {
+            background-color: var(--blue-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .styled-dropdown {
+            width: 100%;
+            max-width: 220px;
+            padding: 10px 5px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            font-size: 1rem;
+            cursor: pointer;
+            position: relative;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .styled-dropdown:focus {
+            outline: none;
+            border-color: var(--blue-accent);
+            box-shadow: 0 0 10px var(--blue-accent);
+        }
+
+        .styled-dropdown option {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+        }
+
+        /* Custom arrow for dropdown */
+        .styled-dropdown::after {
+            content: '\f078'; /* Font Awesome arrow icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-shield"></i>
+            Manager Dashboard
+        </div>
+        <div class="navContent">
+            <a href="/"><div><i class="fa-solid fa-house"></i></div></a>
+            <a href="/home"><div><i class="fa-brands fa-xing"></i></div></a>
+            <a href="/dashboard"><div><i class="fa-solid fa-chart-line"></i></div></a>
+            {% if session['logged_in'] %}
+            <a href="/logout"><div><i class="fa-solid fa-sign-out-alt"></i> Logout</div></a>
+            {% else %}
+            <a href="/login"><div><i class="fa-solid fa-sign-in-alt"></i> Login</div></a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="table-container">
+            <h2 class="table-title">Vulnerabilities Assignment</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Target URL</th>
+                        <th>High</th>
+                        <th>Medium</th>
+                        <th>Low</th>
+                        <th>Assigned Tester</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vulnerability in vulnerabilities %}
+                    <tr>
+                        <td>{{ vulnerability.target_url }}</td>
+                        <td>{{ vulnerability.high_count }}</td>
+                        <td>{{ vulnerability.medium_count }}</td>
+                        <td>{{ vulnerability.low_count }}</td>
+                        
+                        {% if vulnerability.tester_assigned == 'yes' %}
+                            <td>{{ vulnerability.tester_name }}</td>
+                            <td>{{ vulnerability.tester_status }}</td>
+                        {% else %}
+                            <form class="assign-form" method="POST" action="{{ url_for('assign_tester', scan_id=vulnerability.id) }}" onsubmit="return showToast(event)">
+                                <td><select name="tester_id" class="styled-dropdown">
+                                    {% for tester in testers %}
+                                    <option value="{{ tester.id }}">{{ tester.name }}</option>
+                                    {% endfor %}
+                                </select></td>
+                                <td><button class="action-link" type="submit">Assign</button></td>
+                            </form>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        function showToast(event) {
+            event.preventDefault();
+            const form = event.target;
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+            })
+            .then(response => {
+                const toast = document.getElementById('toast');
+                if (response.ok) {
+                    toast.textContent = "Status updated successfully!";
+                    toast.className = "toast show";
+                } else {
+                    toast.textContent = "Sorry, could not update status.";
+                    toast.className = "toast error show";
+                }
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            })
+            .catch(() => {
+                const toast = document.getElementById('toast');
+                toast.textContent = "An unexpected error occurred.";
+                toast.className = "toast error show";
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            });
+        }
+    </script>
+</body>
+</html>

