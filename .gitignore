@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+.env/
+ENV/
+env/
+
+# Environment Variables
+.env
+.env.*
+
+# Flask
+instance/
+*.db
+*.sqlite3
+
+# Logs
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Build / Distribution
+build/
+dist/
+*.egg-info/
+
+# Docker
+docker-compose.override.yml
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Reports / Generated Files
+*.pdf
+reports/
+static/reports/
+
+# Temporary Files
+tmp/
+temp/
+
+# Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Excalidraw backups
+*.excalidraw
+
+# Media files
+*.mp4
+
+# AWS / Secrets
+*.pem
+*.key
+credentials.json
+
+# Misc
+*.swp

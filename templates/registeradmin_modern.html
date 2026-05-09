@@ -1,0 +1,36 @@
+{% extends "base_modern.html" %}
+
+{% block title %}Register Staff | PayloadWeaver{% endblock %}
+
+{% block content %}
+<section class="content-grid">
+    <article class="card" style="max-width: 680px; width: 100%; margin: 0 auto;">
+        <div class="eyebrow">Admin Tools</div>
+        <h1>Create admin or tester access</h1>
+        <p class="subtext">Provision internal accounts for testers and administrators from one place.</p>
+
+        <form action="/registeradmin" method="POST" style="margin-top: 24px;">
+            <label for="name">
+                Full name
+                <input type="text" id="name" name="name" placeholder="Staff member name" required>
+            </label>
+            <label for="email">
+                Email address
+                <input type="email" id="email" name="email" placeholder="staff@example.com" required>
+            </label>
+            <label for="password">
+                Password
+                <input type="password" id="password" name="password" placeholder="Create a password" required>
+            </label>
+            <label for="role">
+                Access level
+                <select id="role" name="role" required>
+                    <option value="tester">Tester</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </label>
+            <button type="submit" class="primary">Create Staff Account</button>
+        </form>
+    </article>
+</section>
+{% endblock %}

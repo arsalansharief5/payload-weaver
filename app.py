@@ -1,29 +1,50 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, send_file,session,send_from_directory,abort
+import os
+import time
+from datetime import datetime
+from queue import Empty, Queue
+from urllib.parse import urlparse
+
+import attack
+import crawler
+import report_generator
+import urllib3
+import utils
+from flask import (
+    Flask,
+    Response,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    session,
+    stream_with_context,
+    url_for,
+)
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
-import time
-import requests
-import crawler
-import attack
-import report_generator
 from connection import connect_to_zap
 from urllib3.exceptions import InsecureRequestWarning
-import urllib3
-from queue import Queue
-import threading
 from flask_migrate import Migrate
+
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    def load_dotenv():
+        return False
 
 # Initialize Migrate
 
 # Initialize Flask app
+load_dotenv()
 app = Flask(__name__)
 
 # Set up the database URI
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///site.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'your-secret-key'  # For session management
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-change-me')  # For session management
 
 # Initialize database and login manager
 db = SQLAlchemy(app)
@@ -36,12 +57,34 @@ urllib3.disable_warnings(InsecureRequestWarning)
 
 # Create a global log queue
 log_queue = Queue()
+REPORTS_DIR = os.path.join(app.root_path, "static", "reports")
 
 
 
 def log_message(message):
     """Add a log message to the queue."""
     log_queue.put(f"{datetime.now().strftime('%H:%M:%S')} - {message}")
+
+
+def clear_log_queue():
+    while not log_queue.empty():
+        try:
+            log_queue.get_nowait()
+        except Empty:
+            break
+
+
+def normalize_target_url(raw_url):
+    raw_url = raw_url.strip()
+    if not raw_url:
+        return ""
+    if not raw_url.startswith(("http://", "https://")):
+        raw_url = f"https://{raw_url}"
+
+    parsed = urlparse(raw_url)
+    if not parsed.netloc:
+        return ""
+    return raw_url
 
 # Models
 class User(UserMixin, db.Model):
@@ -84,17 +127,27 @@ with app.app_context():
 #whenever you want to get the user from the db run this function, we are telling this to flask
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 # Routes
 @app.route('/')
 def home():
+    return redirect(url_for('index'))
+
+
+@app.route('/welcome')
+def welcome():
     return render_template('home.html')
+
+
+@app.route('/health')
+def health():
+    return {"status": "ok"}, 200
 
 
 @app.route('/home')
 def index():
-    return render_template('index.html')
+    return render_template('index_modern.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -118,7 +171,7 @@ def register():
         flash("Registration successful! You can now log in.", "success")
         return redirect(url_for('login'))
     
-    return render_template('register.html')
+    return render_template('register_modern.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -140,7 +193,7 @@ def login():
         else:
             flash('Login failed. Check your email and/or password.', 'danger')
     
-    return render_template('login.html')
+    return render_template('login_modern.html')
 
 @app.route('/logout')
 def logout():
@@ -156,29 +209,27 @@ def dashboard():
     if current_user.role == 'admin':
         # Get all users with the role 'user'
         users = User.query.filter_by(role='user').all()
-        return render_template('admin.html', users=users, current_user=current_user)
+        return render_template('admin_modern.html', users=users, current_user=current_user)
     
-    # elif current_user.role == 'manager':
-    #     # Get all users with the role 'user'
-    #     users = User.query.filter_by(role='user').all()
-    #     return render_template('manager.html', users=users, current_user=current_user,scanned_urls=current_user.scanned_urls)
     elif current_user.role == 'tester':
         assignments = Tester.query.filter_by(tester_id=current_user.id).all()
-        return render_template('tester_dashboard.html', assignments=assignments)
+        return render_template('tester_dashboard_modern.html', assignments=assignments)
     else:
         # User dashboard logic
         scanned_urls = [
             {
+                "id": url.id,
                 "target_url": url.target_url,
                 "attack_type": url.attack_type,
                 "scan_duration": url.scan_duration,
                 "high_count": url.high_count,
                 "medium_count": url.medium_count,
-                "low_count": url.low_count
+                "low_count": url.low_count,
+                "report_filename": os.path.basename(url.report_path) if url.report_path else None,
             }
             for url in current_user.scanned_urls
         ]
-        return render_template('dashboard.html', scanned_urls=scanned_urls, current_user=current_user)
+        return render_template('dashboard_modern.html', scanned_urls=scanned_urls, current_user=current_user)
     
 @app.route('/update_status/<int:assignment_id>', methods=['POST'])
 @login_required
@@ -266,7 +317,7 @@ def user_vulnerabilities(user_id):
             vulnerability.tester_name = None
         vulnerabilities_with_tester.append(vulnerability)
 
-    return render_template('user_vulnerabilities.html', 
+    return render_template('user_vulnerabilities_modern.html', 
                            user=user, 
                            vulnerabilities=vulnerabilities_with_tester, 
                            testers=testers)
@@ -293,203 +344,104 @@ def register1():
         flash("Registration successful!", "success")
         return redirect(url_for('dashboard'))
     
-    return render_template('registeradmin.html')
-
-
-
-
-# @app.route('/start_scan', methods=['POST'])
-# @login_required
-# def start_scan():
-#     target_urls = request.form['target_url'].strip().split(',')
-#     attack_mode = request.form['attack_mode']
-
-#     scan_type = request.form['scan_type']
-#     zap_url = "https://localhost:8080" 
-#     api_key = "d4b8srkheoju3qe1uo8v6pm2k4" 
-
-#     zap = connect_to_zap(zap_url)
-#     if not zap:
-#         log_message("Failed to connect to ZAP. Please try again.")
-#         return "Failed to connect to ZAP. Please try again.", 500
-
-#     log_message("Creating a new ZAP session...")
-#     create_zap_session(zap_url)
-
-#     combined_results = {
-#         'scan_start_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-#         'total_scan_duration': 0,
-#         'urls_scanned': [],
-#         'total_vulnerabilities': {
-#             'High': 0,
-#             'Medium': 0,
-#             'Low': 0
-#         },
-#         'detailed_results': []
-#     }
-
-#     for target_url in target_urls:
-#         target_url = target_url.strip()
-#         log_message(f"Starting scan for {target_url}...")
-
-#         start_time = time.time()
-
-#         log_message("Crawling the target website...")
-#         crawl_data = crawler.crawl_website(zap, target_url)
-#         log_message("Crawling completed.")
-
-#         vulnerabilities = []
-#         attack_type = ""
-
-#         log_message(f"Performing {attack_mode} attack...")
-#         if attack_mode == "1":
-#             vulnerabilities = attack.attack_website(zap, target_url, attack_type="xss")
-#             attack_type = "XSS"
-#         elif attack_mode == "2":
-#             vulnerabilities = attack.attack_website(zap, target_url, attack_type="sql_injection")
-#             attack_type = "SQL Injection"
-#         elif attack_mode == "3":
-#             vulnerabilities = attack.attack_website(zap, target_url, attack_type="command_injection")
-#             attack_type = "Command Injection"
-#         elif attack_mode == "4":
-#             vulnerabilities = attack.attack_website(zap, target_url, attack_type="all")
-#             attack_type = "All Attacks"
-#         log_message("Attacks completed.")
-        
-#         end_time = time.time()
-#         scan_duration = round(end_time - start_time, 2)
-#         log_message(f"Scan completed in {scan_duration} seconds.")
-
-#         vuln_counts = {
-#             'High': len([v for v in vulnerabilities if v['risk'] == "High"]),
-#             'Medium': len([v for v in vulnerabilities if v['risk'] == "Medium"]),
-#             'Low': len([v for v in vulnerabilities if v['risk'] == "Low"])
-#         }
-
-#         combined_results['total_scan_duration'] += scan_duration
-#         combined_results['urls_scanned'].append(target_url)
-#         for severity in ['High', 'Medium', 'Low']:
-#             combined_results['total_vulnerabilities'][severity] += vuln_counts[severity]
-
-#         combined_results['detailed_results'].append({
-#             'url': target_url,
-#             'scan_duration': scan_duration,
-#             'crawl_data': crawl_data,
-#             'attack_performed': True,
-#             'attack_type': attack_type,
-#             'vulnerabilities': vulnerabilities,
-#             'vulnerability_counts': vuln_counts
-#         })
-
-#         scan = ScannedURL(
-#             target_url=target_url,
-#             attack_type=attack_type,
-#             scan_duration=scan_duration,
-#             high_count=vuln_counts['High'],
-#             medium_count=vuln_counts['Medium'],
-#             low_count=vuln_counts['Low'],
-#             report_path="",
-#             user_id=current_user.id
-#         )
-#         db.session.add(scan)
-
-#     db.session.commit()
-
-#     # Generate combined report
-#     log_message("Generating the combined report...")
-#     combined_results['scan_end_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-#     combined_report_path = report_generator.generate_combined_report(combined_results)
-
-#     log_message("Report generated successfully.")
-
-    
-
-#     return render_template('results.html', target_url=target_url,combined_results=combined_results,
-#                             report_path=combined_report_path,high_count=vuln_counts['High'], medium_count=vuln_counts['Medium'], 
-#                             low_count=vuln_counts['Low'],vulnerabilities=vulnerabilities,attack_type=attack_type,scan_duration=scan_duration)
-
+    return render_template('registeradmin_modern.html')
 @app.route('/start_scan', methods=['POST'])
 @login_required
 def start_scan():
-    # Retrieve the target URLs from the form input, splitting by commas if multiple URLs are provided
-    target_urls = request.form['target_url'].strip().split(',')
-    # Retrieve the type of scan (e.g., passive or active)
-    scan_type = request.form['scan_type']
+    clear_log_queue()
+    target_urls = []
+    for url in request.form['target_url'].split(','):
+        normalized_url = normalize_target_url(url)
+        if normalized_url:
+            target_urls.append(normalized_url)
+    scan_type = request.form.get('scan_type', 'regular')
+    ai_assisted = scan_type == 'ai_assisted'
 
-    # ZAP connection details (URL and API key)
-    zap_url = "https://localhost:8080" 
-    api_key = "d4b8srkheoju3qe1uo8v6pm2k4" 
+    if not target_urls:
+        flash("Enter at least one valid website URL to scan.", "danger")
+        return redirect(url_for('index'))
 
-    # Establish a connection to ZAP
-    zap = connect_to_zap(zap_url)
+    zap = connect_to_zap()
     if not zap:
-        # Log an error and return a failure response if the connection fails
-        log_message("Failed to connect to ZAP. Please try again.")
-        return "Failed to connect to ZAP. Please try again.", 500
+        log_message("ZAP connection failed. Start OWASP ZAP in daemon mode and try again.")
+        flash("Could not connect to OWASP ZAP. Start ZAP locally, then retry the scan.", "danger")
+        return redirect(url_for('index'))
 
-    # Log a message indicating the start of a new ZAP session
-    log_message("Creating a new ZAP session...")
-    create_zap_session(zap_url)
+    log_message(f"Connected to ZAP at {getattr(zap, 'proxy_url', 'unknown endpoint')}.")
+    log_message("Creating a fresh ZAP session...")
+    create_zap_session(zap)
 
-    # Initialize a dictionary to store combined results for all scanned URLs
     combined_results = {
-        'scan_start_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),  # Start time of the scan
-        'total_scan_duration': 0,  # Total time taken for the scan
-        'urls_scanned': [],  # List of URLs scanned
-        'total_vulnerabilities': {  # Total vulnerabilities categorized by severity
+        'scan_start_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        'total_scan_duration': 0,
+        'urls_scanned': [],
+        'total_vulnerabilities': {
             'High': 0,
             'Medium': 0,
             'Low': 0
         },
-        'detailed_results': []  # Detailed results for each URL
+        'detailed_results': []
+    }
+    scan_records = []
+    last_result = {
+        "target_url": target_urls[0],
+        "high_count": 0,
+        "medium_count": 0,
+        "low_count": 0,
+        "vulnerabilities": [],
+        "scan_duration": 0,
+        "attack_type": "AI-Assisted ZAP Scan" if ai_assisted else f"{scan_type.title()} ZAP Scan",
+        "site_category": None,
+        "ai_summary": None,
     }
 
-    # Loop through each target URL provided
     for target_url in target_urls:
-
-        start_time = time.time()  # Record the start time of the scan
-        
-        # Remove any leading/trailing whitespace from the URL
-        target_url = target_url.strip()
-        log_message(f"Starting scan for {target_url}...")  # Log the start of the scan
-
-        
-
-        # Crawl the target website to gather structural information
-        log_message("Crawling the target website...")
+        start_time = time.time()
+        log_message(f"Starting scan for {target_url}...")
+        log_message("Running ZAP spider...")
         crawl_data = crawler.crawl_website(zap, target_url)
-        log_message("Crawling completed.")  # Log the completion of the crawl
+        log_message(f"Spider finished with {crawl_data['num_crawls']} discovered URLs.")
+        site_category = None
+        ai_summary = None
 
-        # Initialize variables to store vulnerabilities and attack type
-        vulnerabilities = []
-        attack_type = ""
+        zap_scan_type = scan_type
+        if ai_assisted:
+            log_message("Collecting site content for AI classification...")
+            site_category, _ = utils.classify_website(target_url)
+            if site_category:
+                log_message(f"AI classified the site as {site_category}.")
+            else:
+                log_message("AI classification was unavailable. Check OPENAI_API_KEY and network access, then retry if needed.")
+            zap_scan_type = "deep"
 
-        # Determine the attack type based on the user's selection and perform the attack
-        log_message("Performing attack...")
-       
-        vulnerabilities = attack.attack_website(zap, target_url, scan_type, attack_type)
-        attack_type = "All Attacks"
-        print("Attack completed")
-        log_message("Attacks completed.")  # Log the completion of attacks
+        log_message(f"Running {zap_scan_type} ZAP analysis...")
+        vulnerabilities = attack.attack_website(zap, target_url, zap_scan_type, "all")
+        attack_type = "AI-Assisted ZAP Scan" if ai_assisted else f"{scan_type.title()} ZAP Scan"
+        log_message(f"Analysis completed with {len(vulnerabilities)} findings.")
 
-        end_time = time.time()  # Record the end time of the scan
-        scan_duration = round(end_time - start_time, 2)  # Calculate scan duration
-        log_message(f"Scan completed in {scan_duration} seconds.")  # Log the scan duration
+        if ai_assisted:
+            log_message("Generating AI remediation summary...")
+            ai_summary = utils.generate_ai_scan_summary(target_url, site_category, crawl_data, vulnerabilities)
+            if ai_summary:
+                log_message("AI remediation summary added to the report.")
+            else:
+                log_message("AI summary unavailable. The scan results will still include the raw ZAP findings.")
 
-        # Categorize vulnerabilities by severity
+        end_time = time.time()
+        scan_duration = round(end_time - start_time, 2)
+        log_message(f"Scan completed in {scan_duration} seconds.")
+
         vuln_counts = {
             'High': len([v for v in vulnerabilities if v['risk'] == "High"]),
             'Medium': len([v for v in vulnerabilities if v['risk'] == "Medium"]),
             'Low': len([v for v in vulnerabilities if v['risk'] == "Low"])
         }
 
-        # Update the combined results with data for this URL
         combined_results['total_scan_duration'] += scan_duration
         combined_results['urls_scanned'].append(target_url)
         for severity in ['High', 'Medium', 'Low']:
             combined_results['total_vulnerabilities'][severity] += vuln_counts[severity]
 
-        # Add detailed results for this URL
         combined_results['detailed_results'].append({
             'url': target_url,
             'scan_duration': scan_duration,
@@ -497,63 +449,97 @@ def start_scan():
             'attack_performed': True,
             'attack_type': attack_type,
             'vulnerabilities': vulnerabilities,
-            'vulnerability_counts': vuln_counts
+            'vulnerability_counts': vuln_counts,
+            'site_category': site_category,
+            'ai_summary': ai_summary,
         })
 
-        # Save scan data to the database
         scan = ScannedURL(
-            target_url=target_url,  # URL being scanned
-            attack_type=attack_type,  # Type of attack performed
-            scan_duration=scan_duration,  # Duration of the scan
-            high_count=vuln_counts['High'],  # Count of High-risk vulnerabilities
-            medium_count=vuln_counts['Medium'],  # Count of Medium-risk vulnerabilities
-            low_count=vuln_counts['Low'],  # Count of Low-risk vulnerabilities
-            report_path="",  # Placeholder for report path
-            user_id=current_user.id  # ID of the user who initiated the scan
+            target_url=target_url,
+            attack_type=attack_type,
+            scan_duration=scan_duration,
+            high_count=vuln_counts['High'],
+            medium_count=vuln_counts['Medium'],
+            low_count=vuln_counts['Low'],
+            report_path="",
+            user_id=current_user.id
         )
-        
-        db.session.add(scan)  # Add the scan record to the session
+        db.session.add(scan)
+        scan_records.append(scan)
+        last_result = {
+            "target_url": target_url,
+            "high_count": vuln_counts['High'],
+            "medium_count": vuln_counts['Medium'],
+            "low_count": vuln_counts['Low'],
+            "vulnerabilities": vulnerabilities,
+            "scan_duration": scan_duration,
+            "attack_type": attack_type,
+            "site_category": site_category,
+            "ai_summary": ai_summary,
+        }
 
-    db.session.commit()  # Commit the session to save all scans to the database
-
-    # Generate a combined report for all scanned URLs
     log_message("Generating the combined report...")
-    combined_results['scan_end_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Record the end time of the scan
-    combined_report_path = report_generator.generate_combined_report(combined_results)  # Generate the report
-    log_message("Report generated successfully.")  # Log the successful generation of the report
-    
-    # Render the results page with scan details and the combined report
-    return render_template('results.html', 
-                           target_url=target_url, 
-                           combined_results=combined_results,
-                           report_path=combined_report_path, 
-                           high_count=vuln_counts['High'], 
-                           medium_count=vuln_counts['Medium'], 
-                           low_count=vuln_counts['Low'], 
-                           vulnerabilities=vulnerabilities, 
-                           attack_type=attack_type, 
-                           scan_duration=scan_duration)
+    combined_results['scan_end_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    combined_report_path = report_generator.generate_combined_report(combined_results)
+    report_filename = os.path.basename(combined_report_path)
+
+    for scan_record in scan_records:
+        scan_record.report_path = combined_report_path
+
+    db.session.commit()
+    log_message("Report generated successfully.")
+
+    return render_template(
+        'results_modern.html',
+        target_url=last_result["target_url"],
+        combined_results=combined_results,
+        report_filename=report_filename,
+        high_count=last_result["high_count"],
+        medium_count=last_result["medium_count"],
+        low_count=last_result["low_count"],
+        vulnerabilities=last_result["vulnerabilities"],
+        attack_type=last_result["attack_type"],
+        scan_duration=last_result["scan_duration"],
+        site_category=last_result["site_category"],
+        ai_summary=last_result["ai_summary"],
+        scan_mode=scan_type,
+    )
 
 
-@app.route('/download_report/<path:report_path>')
+@app.route('/download_report/<path:report_name>')
 @login_required
-def download_report(report_path):
+def download_report(report_name):
     """Allow users to download the generated report."""
-    return send_file(report_path, as_attachment=True)
+    safe_name = os.path.basename(report_name)
+    report_path = os.path.join(REPORTS_DIR, safe_name)
+    if not os.path.exists(report_path):
+        abort(404)
+    return send_from_directory(REPORTS_DIR, safe_name, as_attachment=True)
 
-def create_zap_session(zap_url):
-    params = {
-        'name': 'new_session',
-        'overwrite': 'true'
-    }
+@app.route('/logs')
+def stream_logs():
+    @stream_with_context
+    def event_stream():
+        while True:
+            try:
+                message = log_queue.get(timeout=15)
+                yield f"data: {message}\n\n"
+            except Empty:
+                yield "data: waiting for scan updates...\n\n"
+
+    return Response(event_stream(), mimetype='text/event-stream')
+
+
+def create_zap_session(zap):
     try:
-        response = requests.get(f'{zap_url}/JSON/core/action/newSession/', params=params, verify=False, timeout=30)
-        if response.status_code == 200:
-            log_message("New session created successfully.")
-        else:
-            log_message(f"Failed to create session. Response: {response.json()}")
-    except requests.exceptions.RequestException as e:
+        zap.core.new_session(name='payloadweaver', overwrite=True)
+        log_message("New session created successfully.")
+    except Exception as e:
         log_message(f"Error creating session: {e}")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(
+        host=os.getenv("FLASK_HOST", "0.0.0.0"),
+        port=int(os.getenv("PORT", "5000")),
+        debug=os.getenv("FLASK_DEBUG", "false").lower() == "true",
+    )

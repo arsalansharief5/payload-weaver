@@ -1,0 +1,66 @@
+{% extends "base_modern.html" %}
+
+{% block title %}Admin Dashboard | PayloadWeaver{% endblock %}
+
+{% block content %}
+<section class="content-grid">
+    <article class="card">
+        <div class="eyebrow">Admin Control</div>
+        <h1>Users and vulnerability ownership</h1>
+        <p class="subtext">Review registered user accounts, open their vulnerability history, and assign testers from the detailed view.</p>
+
+        <div class="stat-grid">
+            <div class="stat">
+                <span>Total users</span>
+                <strong>{{ users|length }}</strong>
+            </div>
+            <div class="stat">
+                <span>Role</span>
+                <strong>Admin</strong>
+            </div>
+            <div class="stat">
+                <span>Action</span>
+                <strong>Assign</strong>
+            </div>
+            <div class="stat">
+                <span>Next step</span>
+                <strong><a href="/registeradmin" style="color: var(--primary); text-decoration: none;">Create staff</a></strong>
+            </div>
+        </div>
+    </article>
+
+    <article class="card">
+        <div style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom: 14px; flex-wrap:wrap;">
+            <h2 style="margin:0;">Registered users</h2>
+            <a class="button-link primary" href="/registeradmin">Add Admin or Tester</a>
+        </div>
+
+        {% if users %}
+        <div style="overflow:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td><span class="badge">{{ user.role }}</span></td>
+                        <td><a class="button-link" href="{{ url_for('user_vulnerabilities', user_id=user.id) }}">View Vulnerabilities</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">No user accounts were found yet.</div>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base_modern.html" %}
+
+{% block title %}User Vulnerabilities | PayloadWeaver{% endblock %}
+
+{% block content %}
+<section class="content-grid">
+    <article class="card">
+        <div class="eyebrow">Assignment Detail</div>
+        <h1>{{ user.name }}</h1>
+        <p class="subtext">Review this user’s scan history, see severity counts, and assign a tester to each unowned result.</p>
+    </article>
+
+    <article class="card">
+        {% if vulnerabilities %}
+        <div style="overflow:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Target URL</th>
+                        <th>High</th>
+                        <th>Medium</th>
+                        <th>Low</th>
+                        <th>Tester</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vulnerability in vulnerabilities %}
+                    <tr>
+                        <td>{{ vulnerability.target_url }}</td>
+                        <td>{{ vulnerability.high_count }}</td>
+                        <td>{{ vulnerability.medium_count }}</td>
+                        <td>{{ vulnerability.low_count }}</td>
+                        {% if vulnerability.tester_assigned == 'yes' %}
+                        <td>{{ vulnerability.tester_name }}</td>
+                        <td><span class="badge">{{ vulnerability.tester_status }}</span></td>
+                        {% else %}
+                        <td colspan="2">
+                            <form method="POST" action="{{ url_for('assign_tester', scan_id=vulnerability.id) }}" style="display:flex; gap:10px; align-items:center; min-width: 290px;">
+                                <select name="tester_id">
+                                    {% for tester in testers %}
+                                    <option value="{{ tester.id }}">{{ tester.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="primary">Assign Tester</button>
+                            </form>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">This user does not have any saved scans yet.</div>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

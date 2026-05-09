@@ -13,7 +13,7 @@ import certifi
 urllib3.disable_warnings(InsecureRequestWarning)
 def main():
     zap_url =  "https://localhost:8080"  # Adjusted URL to use https and port 8081
-    api_key = "d4b8srkheoju3qe1uo8v6pm2k4" # Replace with your actual API key
+    api_key = "8avko0kbq33a54oubi4votuva4" # Replace with your actual API key
 
     print(colored("Initializing connection to ZAP...", "blue"))
     zap = connect_to_zap(zap_url)

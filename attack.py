@@ -1,97 +1,71 @@
-from concurrent.futures import ThreadPoolExecutor
-from tqdm import tqdm
-import os
 import time
-from termcolor import colored
-import requests 
-from requests.adapters import HTTPAdapter
-from urllib3.poolmanager import PoolManager
-from utils import *
 
 
-class SSLAdapter(HTTPAdapter):
-    def init_poolmanager(self, *args, **kwargs):
-        kwargs['ssl_context'] = None  
-        return super().init_poolmanager(*args, **kwargs)
-
-def load_payload(file_path):
-    print("aayo")
-    print(file_path)
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"Payload file not found: {file_path}")
-    with open(file_path, "r") as file:
-        return [line.strip() for line in file.readlines()]
-
-# def attack_website(zap, target_url, scan_type, attack_type="all"):
-#     mode = attack_type
-    
-#     xss_payloads = load_payload("Payload/xss_payload.txt")
-#     sql_payloads = load_payload("Payload/sql_payload.txt")
-#     cmd_injection_payloads = load_payload("Payload/cmd_injection_payload.txt")
-    
-#     vulnerabilities = []
-
-#     if mode == "xss" or mode == "all":
-#         vulnerabilities += perform_attack(zap, target_url, xss_payloads, "XSS")
-    
-#     if mode == "sql_injection" or mode == "all":
-#         vulnerabilities += perform_attack(zap, target_url, sql_payloads, "SQL Injection")
-    
-#     if mode == "command_injection" or mode == "all":
-#         vulnerabilities += perform_attack(zap, target_url, cmd_injection_payloads, "Command Injection")
-    
-#     return vulnerabilities
+SCAN_PROFILES = {
+    "quick": {"active_scan": False, "alert_limit": 50},
+    "regular": {"active_scan": True, "alert_limit": 100},
+    "deep": {"active_scan": True, "alert_limit": 250},
+}
 
 
-def attack_website(zap, target_url, scan_type,attack_type):
-    # Load payloads
-    file_path = generate_payload_file_path(target_url,attack_type)
-    
-    payloads = load_payload(file_path)
-    print(payloads)
-    # Limit payload size based on scan type
-    def limit_payloads(payloads, scan_type):
-        if scan_type == "quick":
-            return payloads[:len(payloads) // 3]
-        elif scan_type == "regular":
-            return payloads[:(2 * len(payloads)) // 3]
-        elif scan_type == "deep":
-            return payloads  # Use full payloads
-        else:
-            raise ValueError(f"Invalid scan type: {scan_type}")
+def attack_website(zap, target_url, scan_type, attack_type="all"):
+    profile = SCAN_PROFILES.get(scan_type, SCAN_PROFILES["regular"])
+
+    _wait_for_passive_scan(zap)
+
+    if profile["active_scan"]:
+        scan_id = zap.ascan.scan(target_url, recurse=True, inscopeonly=False)
+        while int(zap.ascan.status(scan_id)) < 100:
+            time.sleep(2)
+
+    _wait_for_passive_scan(zap)
+    alerts = zap.core.alerts(baseurl=target_url, start=0, count=profile["alert_limit"])
+    return _normalize_alerts(alerts)
 
 
-    final_payloads = limit_payloads(payloads, scan_type)
-    
-    vulnerabilities = []
-
-    # Perform attacks for all payloads
-    vulnerabilities += perform_attack(zap, target_url, final_payloads, "All")
-   
-    return vulnerabilities
-
-def perform_attack(zap, target_url, payloads, attack_type):
-    def send_payload(payload):
+def _wait_for_passive_scan(zap, max_wait=120):
+    waited = 0
+    while waited < max_wait:
         try:
-            session = requests.Session()
-            session.mount('https://', SSLAdapter())
-            
-            response = session.get(f"{target_url}?input={payload}", timeout=30,verify=False)
-            time.sleep(0.1) 
-            
-            return zap.core.alerts()
-        
-        except requests.exceptions.SSLError as ssl_error:
-            print(colored(f"SSL Error: {ssl_error}", "red"))
-            return []
-        except requests.exceptions.RequestException as e:
-            print(colored(f"Request Error: {e}", "red"))
-            return []
+            if int(zap.pscan.records_to_scan) == 0:
+                return
+        except Exception:
+            return
+        time.sleep(1)
+        waited += 1
 
+
+def _normalize_alerts(alerts):
     vulnerabilities = []
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        results = list(tqdm(executor.map(send_payload, payloads), total=len(payloads)))
-    
-    for result in results:
-        vulnerabilities.extend(result)
+    seen = set()
+
+    for alert in alerts:
+        fingerprint = (
+            alert.get("pluginId"),
+            alert.get("name"),
+            alert.get("url"),
+            alert.get("param"),
+        )
+        if fingerprint in seen:
+            continue
+        seen.add(fingerprint)
+
+        vulnerabilities.append(
+            {
+                "name": alert.get("name", "Unnamed finding"),
+                "risk": alert.get("risk", "Informational"),
+                "description": alert.get("description", "No description provided by ZAP."),
+                "solution": alert.get("solution", "No remediation guidance provided by ZAP."),
+                "url": alert.get("url", ""),
+                "affected_url": alert.get("url", ""),
+                "parameter": alert.get("param", ""),
+                "evidence": alert.get("evidence", ""),
+                "reference": alert.get("reference", ""),
+                "attack": alert.get("attack", ""),
+            }
+        )
+
+    vulnerabilities.sort(
+        key=lambda item: {"High": 0, "Medium": 1, "Low": 2, "Informational": 3}.get(item["risk"], 4)
+    )
     return vulnerabilities

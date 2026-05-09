@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PayloadWeaver</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #07101d;
+      --panel: rgba(10, 21, 37, 0.82);
+      --panel-strong: rgba(7, 17, 30, 0.96);
+      --line: rgba(149, 180, 255, 0.16);
+      --text: #ecf4ff;
+      --muted: #9ab0cb;
+      --primary: #58d0ff;
+      --success: #87f8c5;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Outfit", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(88, 208, 255, 0.18), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(144, 255, 216, 0.12), transparent 26%),
+        linear-gradient(160deg, #02060c, var(--bg) 48%, #0b1730 100%);
+    }
+
+    .page {
+      width: min(1220px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .nav {
+      position: sticky;
+      top: 16px;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      border-radius: 22px;
+      background: rgba(5, 13, 23, 0.72);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .brand strong {
+      display: block;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.05rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .card {
+      border-radius: 28px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+    }
+
+    .workspace {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .main-panel {
+      padding: 30px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      width: fit-content;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(88, 208, 255, 0.1);
+      color: var(--primary);
+      font-family: "Space Grotesk", sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.86rem;
+    }
+
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(2.2rem, 4.3vw, 3.6rem);
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .lead {
+      max-width: 720px;
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .mode-grid, .status-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mode-grid { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .status-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .status-box, .scan-button, .summary-box {
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .status-box strong, .scan-button strong, .summary-box strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.08rem;
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    .status-box p, .scan-button span, .section-copy, .summary-box p {
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .scan-card,
+    .side-panel {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+      align-content: start;
+      background: linear-gradient(180deg, rgba(14, 31, 54, 0.92), rgba(8, 18, 33, 0.96));
+    }
+
+    .section-title { margin: 0; font-size: 1.5rem; }
+
+    .alert {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255, 214, 107, 0.08);
+      border: 1px solid rgba(255, 214, 107, 0.18);
+      color: #ffe6a0;
+      font-size: 0.95rem;
+    }
+
+    .flash-stack {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .flash {
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .flash.success {
+      color: #d2ffe8;
+      border-color: rgba(135, 248, 197, 0.22);
+      background: rgba(135, 248, 197, 0.08);
+    }
+
+    .flash.danger {
+      color: #ffd2d2;
+      border-color: rgba(255, 138, 138, 0.22);
+      background: rgba(255, 138, 138, 0.08);
+    }
+
+    .flash.info {
+      color: #d7f1ff;
+      border-color: rgba(88, 208, 255, 0.22);
+      background: rgba(88, 208, 255, 0.08);
+    }
+
+    form, label {
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      min-height: 60px;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      font: inherit;
+    }
+
+    input[type="text"]::placeholder { color: #7f95b0; }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: rgba(88, 208, 255, 0.45);
+      box-shadow: 0 0 0 4px rgba(88, 208, 255, 0.12);
+    }
+
+    .scan-button {
+      min-height: 110px;
+      text-align: left;
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+      transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+    }
+
+    .scan-button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(88, 208, 255, 0.32);
+      background: rgba(88, 208, 255, 0.08);
+    }
+
+    .log-wrap {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(3, 8, 16, 0.76);
+      border: 1px solid rgba(120, 149, 207, 0.15);
+      min-height: 320px;
+    }
+
+    .log-wrap header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .pulse {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .pulse::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 0 rgba(135, 248, 197, 0.7);
+      animation: pulse 1.8s infinite;
+    }
+
+    .logs {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      max-height: 220px;
+      overflow: auto;
+    }
+
+    .logs li {
+      padding: 12px 14px;
+      border-radius: 14px;
+      color: #d6e3f7;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.94rem;
+    }
+
+    .inline-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .meta-pill {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .meta-pill span {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-size: 0.88rem;
+    }
+
+    .meta-pill strong {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.05rem;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(135, 248, 197, 0.55); }
+      70% { box-shadow: 0 0 0 12px rgba(135, 248, 197, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(135, 248, 197, 0); }
+    }
+
+    @media (max-width: 1080px) {
+      .workspace { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .page { width: min(100% - 20px, 1220px); }
+      .nav { padding: 14px; }
+      .mode-grid, .status-grid, .inline-meta { grid-template-columns: 1fr; }
+      .main-panel, .scan-card, .side-panel { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <nav class="nav">
+      <div class="brand">
+        <strong>PayloadWeaver</strong>
+        <span>Modern ZAP-driven web scanning</span>
+      </div>
+      <div class="nav-links">
+        <a href="/welcome">About</a>
+        <a href="/dashboard">Dashboard</a>
+        {% if session.get('logged_in') %}
+        <a href="/logout">Logout</a>
+        {% else %}
+        <a href="/login">Login</a>
+        {% endif %}
+      </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <section class="flash-stack">
+      {% for category, message in messages %}
+      <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </section>
+    {% endif %}
+    {% endwith %}
+
+    <section class="workspace">
+      <article class="card main-panel">
+        <div>
+          <div class="eyebrow">Scanner Workspace</div>
+          <h1>Scan a website and get a focused security report.</h1>
+          <p class="lead">
+            Enter a target URL, choose the scan depth, and PayloadWeaver will crawl it with ZAP, collect findings, and generate a downloadable PDF. AI-assisted mode adds category classification and smarter mitigation notes.
+          </p>
+          <div class="inline-meta">
+            <div class="meta-pill">
+              <span>Scanner</span>
+              <strong>OWASP ZAP</strong>
+            </div>
+            <div class="meta-pill">
+              <span>AI provider</span>
+              <strong>OpenAI</strong>
+            </div>
+            <div class="meta-pill">
+              <span>Output</span>
+              <strong>PDF report</strong>
+            </div>
+          </div>
+        </div>
+
+        <aside class="card scan-card">
+          <h2 class="section-title">Launch scan</h2>
+          <p class="section-copy">ZAP must be running locally before you start. AI-assisted mode uses <code>OPENAI_API_KEY</code>.</p>
+
+          {% if not session.get('logged_in') %}
+          <div class="alert">You can view this page without logging in, but starting a scan requires signing in first.</div>
+          {% endif %}
+
+          <form action="/start_scan" method="POST" id="scan-form">
+            <label for="target_url">
+              Target website
+              <input type="text" id="target_url" name="target_url" placeholder="https://example.com" required />
+            </label>
+
+            <div class="mode-grid">
+              <button class="scan-button" type="submit" name="scan_type" value="quick">
+                <strong>Quick</strong>
+                <span>Fast pass for a baseline security check.</span>
+              </button>
+              <button class="scan-button" type="submit" name="scan_type" value="regular">
+                <strong>Regular</strong>
+                <span>Balanced day-to-day scan depth.</span>
+              </button>
+              <button class="scan-button" type="submit" name="scan_type" value="deep">
+                <strong>Deep</strong>
+                <span>Broader analysis with longer runtime.</span>
+              </button>
+              <button class="scan-button" type="submit" name="scan_type" value="ai_assisted">
+                <strong>AI-Assisted</strong>
+                <span>Classifies the site and adds smart mitigation notes.</span>
+              </button>
+            </div>
+          </form>
+        </aside>
+      </article>
+
+      <aside class="card side-panel">
+        <div class="summary-box">
+          <strong>What you’ll see</strong>
+          <p>Severity totals, vulnerability list, site category in AI mode, mitigation guidance, and a downloadable PDF.</p>
+        </div>
+        <div class="summary-box">
+          <strong>What AI does</strong>
+          <p>AI classifies the site into one of the supported categories and summarizes the scan results into practical remediation advice.</p>
+        </div>
+        <div class="log-wrap">
+          <header>
+            <strong>Live scan feed</strong>
+            <span class="pulse">Streaming</span>
+          </header>
+          <ul class="logs" id="log-container">
+            <li>Waiting for a scan to begin.</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const logContainer = document.getElementById("log-container");
+    const eventSource = new EventSource("/logs");
+
+    eventSource.onmessage = function (event) {
+      if (logContainer.children.length === 1 && logContainer.children[0].textContent === "Waiting for a scan to begin.") {
+        logContainer.innerHTML = "";
+      }
+
+      const item = document.createElement("li");
+      item.textContent = event.data;
+      logContainer.appendChild(item);
+      logContainer.scrollTop = logContainer.scrollHeight;
+    };
+
+    document.getElementById("scan-form").addEventListener("submit", function () {
+      logContainer.innerHTML = "<li>Preparing scan request...</li>";
+    });
+  </script>
+</body>
+</html>

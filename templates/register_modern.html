@@ -1,0 +1,33 @@
+{% extends "base_modern.html" %}
+
+{% block title %}Register | PayloadWeaver{% endblock %}
+
+{% block content %}
+<section class="content-grid">
+    <article class="card" style="max-width: 620px; width: 100%; margin: 0 auto;">
+        <div class="eyebrow">New User</div>
+        <h1>Create your account</h1>
+        <p class="subtext">Register a user account to launch scans, save reports, and review your history from the dashboard.</p>
+
+        <form action="/register" method="POST" style="margin-top: 24px;">
+            <label for="name">
+                Full name
+                <input type="text" id="name" name="name" placeholder="Your name" required>
+            </label>
+            <label for="email">
+                Email address
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </label>
+            <label for="password">
+                Password
+                <input type="password" id="password" name="password" placeholder="Choose a password" required>
+            </label>
+            <button type="submit" class="primary">Register</button>
+        </form>
+
+        <p class="subtext" style="margin-top: 16px;">
+            Already have an account? <a href="{{ url_for('login') }}" style="color: var(--primary);">Login here</a>.
+        </p>
+    </article>
+</section>
+{% endblock %}

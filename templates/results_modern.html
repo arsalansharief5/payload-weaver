@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Results</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07101d;
+            --panel: rgba(10, 21, 37, 0.82);
+            --line: rgba(149, 180, 255, 0.16);
+            --text: #ecf4ff;
+            --muted: #9ab0cb;
+            --primary: #58d0ff;
+            --success: #87f8c5;
+            --warning: #ffd36a;
+            --danger: #ff8a8a;
+            --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Outfit", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(88, 208, 255, 0.18), transparent 30%),
+                linear-gradient(160deg, #02060c, var(--bg) 48%, #0b1730 100%);
+        }
+
+        .page {
+            width: min(1240px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 24px 0 40px;
+        }
+
+        .nav, .card {
+            border-radius: 24px;
+            border: 1px solid var(--line);
+            background: var(--panel);
+            backdrop-filter: blur(16px);
+            box-shadow: var(--shadow);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+        }
+
+        .nav a {
+            color: var(--text);
+            text-decoration: none;
+            padding: 11px 14px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .hero {
+            margin-top: 24px;
+            display: grid;
+            gap: 20px;
+        }
+
+        .hero-card {
+            padding: 32px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(88, 208, 255, 0.1);
+            color: var(--primary);
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 16px 0 10px;
+            font-size: clamp(2.4rem, 5vw, 4.6rem);
+            line-height: 0.96;
+            letter-spacing: -0.05em;
+        }
+
+        .sub {
+            margin: 0;
+            color: var(--muted);
+            max-width: 760px;
+            line-height: 1.7;
+        }
+
+        .overview {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-top: 26px;
+        }
+
+        .metric {
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.035);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .metric span {
+            display: block;
+            color: var(--muted);
+            margin-bottom: 10px;
+            font-size: 0.92rem;
+        }
+
+        .metric strong {
+            font-size: 2rem;
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        .high strong { color: var(--danger); }
+        .medium strong { color: var(--warning); }
+        .low strong { color: var(--success); }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px;
+            padding: 0 18px;
+            text-decoration: none;
+            border-radius: 14px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            color: #03111e;
+            background: linear-gradient(135deg, #87f8c5, #58d0ff);
+        }
+
+        .btn-secondary {
+            color: var(--text);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            padding: 24px;
+        }
+
+        .panel h2 {
+            margin: 0 0 14px;
+            font-size: 1.25rem;
+        }
+
+        .summary-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .summary-item {
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .summary-item strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .summary-item span {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .ai-summary {
+            white-space: pre-wrap;
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .severity {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 100px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 0.86rem;
+            font-weight: 700;
+        }
+
+        .severity.high { background: rgba(255, 138, 138, 0.14); color: var(--danger); }
+        .severity.medium { background: rgba(255, 211, 106, 0.14); color: var(--warning); }
+        .severity.low { background: rgba(135, 248, 197, 0.14); color: var(--success); }
+        .severity.informational { background: rgba(88, 208, 255, 0.14); color: var(--primary); }
+
+        .empty {
+            padding: 18px;
+            border-radius: 18px;
+            background: rgba(135, 248, 197, 0.06);
+            border: 1px solid rgba(135, 248, 197, 0.16);
+            color: #c9ffe7;
+        }
+
+        @media (max-width: 980px) {
+            .overview, .grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 720px) {
+            .page { width: min(100% - 20px, 1240px); }
+            .nav { flex-direction: column; align-items: stretch; }
+            .overview { grid-template-columns: repeat(2, 1fr); }
+            .hero-card, .panel { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <nav class="nav">
+            <strong>PayloadWeaver Results</strong>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <a href="/home">New Scan</a>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <article class="card hero-card">
+                <div class="eyebrow">Scan Completed</div>
+                <h1>{{ attack_type }}</h1>
+                <p class="sub">Target: {{ target_url }}. The scan completed in {{ scan_duration }} seconds and the report is ready below.</p>
+
+                <div class="overview">
+                    <div class="metric">
+                        <span>URLs scanned</span>
+                        <strong>{{ combined_results.urls_scanned|length }}</strong>
+                    </div>
+                    <div class="metric high">
+                        <span>High severity</span>
+                        <strong>{{ combined_results.total_vulnerabilities.High }}</strong>
+                    </div>
+                    <div class="metric medium">
+                        <span>Medium severity</span>
+                        <strong>{{ combined_results.total_vulnerabilities.Medium }}</strong>
+                    </div>
+                    <div class="metric low">
+                        <span>Low severity</span>
+                        <strong>{{ combined_results.total_vulnerabilities.Low }}</strong>
+                    </div>
+                    <div class="metric">
+                        <span>AI category</span>
+                        <strong>{{ site_category or 'N/A' }}</strong>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a class="btn btn-primary" href="/download_report/{{ report_filename }}">Download PDF Report</a>
+                    <a class="btn btn-secondary" href="/home">Scan Another Website</a>
+                </div>
+            </article>
+
+            <div class="grid">
+                <section class="card panel">
+                    <h2>Scan summary</h2>
+                    <div class="summary-list">
+                        <div class="summary-item">
+                            <strong>Started</strong>
+                            <span>{{ combined_results.scan_start_time }}</span>
+                        </div>
+                        <div class="summary-item">
+                            <strong>Finished</strong>
+                            <span>{{ combined_results.scan_end_time }}</span>
+                        </div>
+                        <div class="summary-item">
+                            <strong>Total duration</strong>
+                            <span>{{ combined_results.total_scan_duration }} seconds</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card panel">
+                    <h2>Detected findings</h2>
+                    {% set visible_vulns = vulnerabilities|selectattr('risk', 'ne', 'Informational')|list %}
+                    {% if visible_vulns %}
+                    <div style="overflow:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>URL</th>
+                                    <th>Severity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vulnerability in visible_vulns %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ vulnerability.name }}</td>
+                                    <td>{{ vulnerability.url }}</td>
+                                    <td>
+                                        <span class="severity {{ vulnerability.risk|lower }}">{{ vulnerability.risk }}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="empty">No non-informational findings were returned for this target in the latest result set.</div>
+                    {% endif %}
+                </section>
+            </div>
+
+            {% if ai_summary %}
+            <section class="card panel">
+                <h2>AI mitigation guidance</h2>
+                <div class="ai-summary">{{ ai_summary }}</div>
+            </section>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

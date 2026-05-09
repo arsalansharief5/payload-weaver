@@ -1,0 +1,63 @@
+{% extends "base_modern.html" %}
+
+{% block title %}Tester Dashboard | PayloadWeaver{% endblock %}
+
+{% block content %}
+<section class="content-grid">
+    <article class="card">
+        <div class="eyebrow">Tester Workspace</div>
+        <h1>Assigned reviews</h1>
+        <p class="subtext">Track assigned findings, update review status, and pull the generated PDF report when it is available.</p>
+    </article>
+
+    <article class="card">
+        {% if assignments %}
+        <div style="overflow:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Target URL</th>
+                        <th>Scan Type</th>
+                        <th>Total Findings</th>
+                        <th>Status</th>
+                        <th>Report</th>
+                        <th>Update</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for assignment in assignments %}
+                    {% set total_vulnerabilities = assignment.scanned_url.high_count + assignment.scanned_url.medium_count + assignment.scanned_url.low_count %}
+                    {% set report_name = assignment.scanned_url.report_path.split('\\')[-1].split('/')[-1] if assignment.scanned_url.report_path else None %}
+                    <tr>
+                        <td>{{ assignment.scanned_url.target_url }}</td>
+                        <td><span class="badge">{{ assignment.scanned_url.attack_type }}</span></td>
+                        <td>{{ total_vulnerabilities }}</td>
+                        <td>{{ assignment.status }}</td>
+                        <td>
+                            {% if report_name %}
+                            <a class="button-link primary" href="{{ url_for('download_report', report_name=report_name) }}">Download PDF</a>
+                            {% else %}
+                            <span class="subtext">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="POST" action="{{ url_for('update_status', assignment_id=assignment.id) }}" style="display:flex; gap:10px; align-items:center; min-width: 280px;">
+                                <select name="status">
+                                    <option value="under review" {% if assignment.status == 'under review' %}selected{% endif %}>Under Review</option>
+                                    <option value="in progress" {% if assignment.status == 'in progress' %}selected{% endif %}>In Progress</option>
+                                    <option value="completed" {% if assignment.status == 'completed' %}selected{% endif %}>Completed</option>
+                                </select>
+                                <button type="submit" class="primary">Save</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">No assignments are waiting for you right now.</div>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

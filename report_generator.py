@@ -1,12 +1,17 @@
+from datetime import datetime
+import os
+from textwrap import wrap
+
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
-from datetime import datetime
+from reportlab.platypus import PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 from termcolor import colored
-from textwrap import wrap
-import os
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+REPORTS_DIR = os.path.join(BASE_DIR, "static", "reports")
 
 def generate_report(crawl_data, target_url, perform_attack, vulnerabilities, scan_duration, 
                     start_time, high_count, medium_count, low_count, attack_type):
@@ -29,7 +34,7 @@ def generate_report(crawl_data, target_url, perform_attack, vulnerabilities, sca
     Returns:
     None
     """
-    reports_dir = os.path.join("static", "reports")
+    reports_dir = REPORTS_DIR
     os.makedirs(reports_dir, exist_ok=True)
     # Get current timestamp for unique filename
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -183,10 +188,25 @@ def create_wrapped_cell(text, width=60):
     wrapped_text = "\n".join(wrap(text, width))
     return Paragraph(wrapped_text, ParagraphStyle('Normal'))
 
+
+def append_multiline_text(elements, title, text, styles):
+    if not text:
+        return
+
+    elements.append(Paragraph(title, styles['Heading2']))
+    elements.append(Spacer(1, 10))
+
+    for block in str(text).split("\n"):
+        cleaned = block.strip()
+        if cleaned:
+            elements.append(Paragraph(cleaned, styles['Normal']))
+            elements.append(Spacer(1, 6))
+
 def generate_combined_report(combined_results):
     """Generates a combined PDF report for multiple URLs with enhanced formatting"""
+    os.makedirs(REPORTS_DIR, exist_ok=True)
     report_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-    report_filename = f"security_scan_report_{report_time}.pdf"
+    report_filename = os.path.join(REPORTS_DIR, f"security_scan_report_{report_time}.pdf")
     
     doc = SimpleDocTemplate(
         report_filename,
@@ -257,6 +277,7 @@ def generate_combined_report(combined_results):
             ["URLs Crawled:", str(url_result['crawl_data']['num_crawls'])],
             ["Attack Performed:", str(url_result['attack_performed'])],
             ["Attack Type:", url_result['attack_type']],
+            ["AI Category:", url_result.get('site_category', 'N/A') or 'N/A'],
             ["High Severity Findings:", str(url_result['vulnerability_counts']['High'])],
             ["Medium Severity Findings:", str(url_result['vulnerability_counts']['Medium'])],
             ["Low Severity Findings:", str(url_result['vulnerability_counts']['Low'])]
@@ -302,6 +323,10 @@ def generate_combined_report(combined_results):
             
             elements.append(crawled_table)
             elements.append(Spacer(1, 20))
+
+        if url_result.get('ai_summary'):
+            append_multiline_text(elements, "AI Remediation Notes", url_result['ai_summary'], styles)
+            elements.append(Spacer(1, 14))
         
         # Vulnerabilities Details
         if url_result['vulnerabilities']:
@@ -347,4 +372,4 @@ def generate_combined_report(combined_results):
     doc.build(elements)
     print(colored(f"\nCombined PDF report generated: {report_filename}", "green"))
 
-    return report_filename
+    return os.path.abspath(report_filename)

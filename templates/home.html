@@ -3,129 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Crashcipher</title>
+    <title>PayloadWeaver</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300&family=Itim&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body, html {
+        :root {
+            --bg: #07111f;
+            --bg-soft: rgba(10, 22, 39, 0.82);
+            --card: rgba(8, 18, 34, 0.7);
+            --line: rgba(162, 191, 255, 0.18);
+            --text: #edf4ff;
+            --muted: #9fb2ca;
+            --primary: #59d0ff;
+            --accent: #8cffc4;
+            --shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
             margin: 0;
-            padding: 0;
-            height: 100%;
+            min-height: 100vh;
+            font-family: "Outfit", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(89, 208, 255, 0.22), transparent 34%),
+                radial-gradient(circle at bottom right, rgba(140, 255, 196, 0.16), transparent 28%),
+                linear-gradient(135deg, #02060d, var(--bg) 42%, #0b1930 100%);
             overflow: hidden;
         }
 
-        .crimson-text-bold {
-            font-family: "Crimson Text", serif;
-            font-weight: 700;
-            font-style: normal;
-        }
-
-        /* Background video styling */
-        .video-background {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .background-video {
+            position: fixed;
+            inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            z-index: -1;
+            opacity: 0.16;
+            filter: saturate(0.8) contrast(1.1);
+            pointer-events: none;
         }
 
-        /* Centered content */
-        .content {
+        .noise {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+        }
+
+        .shell {
+            position: relative;
+            min-height: 100vh;
+            padding: 32px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100%;
-            color: white;
-            
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
-            background-color: rgba(0, 0, 0, 0.4); /* Optional overlay */
+        }
+
+        .hero {
+            width: min(1120px, 100%);
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 28px;
+            align-items: stretch;
+        }
+
+        .panel,
+        .summary {
+            border: 1px solid var(--line);
+            background: var(--card);
+            backdrop-filter: blur(16px);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel { padding: 42px; }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(89, 208, 255, 0.1);
+            color: var(--primary);
+            font-size: 0.92rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-family: "Space Grotesk", sans-serif;
         }
 
         h1 {
-            font-size: 7rem; /* Increased font size */
-            font-weight: bold;
-            margin: 0;
+            margin: 22px 0 18px;
+            font-size: clamp(3rem, 6vw, 5.7rem);
+            line-height: 0.95;
+            letter-spacing: -0.05em;
         }
 
-        .itim-regular {
-            font-family: "Itim", cursive;
-            font-weight: 400;
-            font-style: normal;
+        .lead {
+            max-width: 700px;
+            margin: 0 0 30px;
+            color: var(--muted);
+            font-size: 1.08rem;
+            line-height: 1.7;
         }
 
-        /* Oval Button Styling */
+        .actions {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 34px;
+        }
+
         .btn {
-            margin-top: 35px;
-            padding: 15px 50px;
-            font-size: 1.5rem;
-            /* background-color: #007bff; Blue color */
-            color: white;
-            border: 2px solid transparent;
-            border-radius: 30px;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: all 0.4s ease;
-            position: relative;
-            z-index: 1;
-            /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); */
-            background-color: #000;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 15px rgba(255, 0, 255, 0.4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 54px;
+            padding: 0 24px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
         }
 
-
-        
-        
-
-        .btn:hover::before {
-            opacity: 1;
-            transform: scale(1.1);
+        .btn-primary {
+            color: #03111e;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            box-shadow: 0 16px 30px rgba(89, 208, 255, 0.2);
         }
 
-        .btn:hover {
-            transform: scale(1.1);
-            background-color: #000;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 15px rgba(255, 0, 255, 0.4);
+        .btn-secondary {
+            color: var(--text);
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.04);
         }
 
-        .btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 5px rgba(255, 0, 255, 0.2);
+        .btn:hover { transform: translateY(-2px); }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
         }
 
-        @media(max-width: 468px){
-            .content h1{
-                font-size: 1rem;
-            }
+        .metric {
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.035);
+        }
 
-            .btn{
-                font-size: 0.5rem;
-            }
+        .metric span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.92rem;
+            margin-bottom: 10px;
+        }
+
+        .metric strong {
+            font-size: 2rem;
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        .summary {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .summary-card {
+            padding: 22px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 16px;
+        }
+
+        .summary-card:last-child { margin-bottom: 0; }
+
+        .summary-card h2,
+        .summary-card h3 {
+            margin: 0 0 12px;
+            font-size: 1.05rem;
+        }
+
+        .summary-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        ul {
+            margin: 0;
+            padding-left: 18px;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        @media (max-width: 960px) {
+            body { overflow: auto; }
+            .hero { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 640px) {
+            .shell { padding: 18px; }
+            .panel, .summary { border-radius: 24px; }
+            .panel { padding: 28px; }
+            .metrics { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-
-    <!-- Background Video -->
-    <video class="video-background" autoplay muted loop>
+    <video class="background-video" autoplay muted loop playsinline>
         <source src="{{ url_for('static', filename='homebg.mp4') }}" type="video/mp4">
-        Your browser does not support the video tag.
     </video>
+    <div class="noise"></div>
 
-    <!-- Centered Content -->
-    <div class="content crimson-text-bold ">
-        <h1>Welcome to CyberXipher</h1>
-        <a style = "text-decoration: none" class="btn itim-regular" href="/home">Get Started</a>
-    </div>
+    <main class="shell">
+        <section class="hero">
+            <div class="panel">
+                <div class="eyebrow">OWASP ZAP Powered Security Workspace</div>
+                <h1>Scan websites, collect real findings, and leave with a PDF report.</h1>
+                <p class="lead">
+                    PayloadWeaver is now centered around a cleaner scan flow: launch a quick, regular, or deep assessment,
+                    watch live progress updates, review the findings, and download a generated report your team can share.
+                </p>
+                <div class="actions">
+                    <a class="btn btn-primary" href="/home">Open Scanner</a>
+                    {% if session.get('logged_in') %}
+                    <a class="btn btn-secondary" href="/dashboard">View Dashboard</a>
+                    {% else %}
+                    <a class="btn btn-secondary" href="/login">Sign In</a>
+                    {% endif %}
+                </div>
 
-    <script>
-        function getStarted() {
-            window.location.href = "http://127.0.0.1:5000/home"
-        }
-    </script>
+                <div class="metrics">
+                    <div class="metric">
+                        <span>Scan modes</span>
+                        <strong>3</strong>
+                    </div>
+                    <div class="metric">
+                        <span>Report output</span>
+                        <strong>PDF</strong>
+                    </div>
+                    <div class="metric">
+                        <span>Engine</span>
+                        <strong>ZAP</strong>
+                    </div>
+                </div>
+            </div>
 
+            <aside class="summary">
+                <div class="summary-card">
+                    <h2>What changed</h2>
+                    <p>The app is focused on a more practical workflow now: spider target, run ZAP analysis, save findings, and expose a direct downloadable report.</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Best use</h3>
+                    <ul>
+                        <li>Quick check before a demo or release</li>
+                        <li>Regular validation during testing</li>
+                        <li>Deep review when you want broader coverage</li>
+                    </ul>
+                </div>
+                <div class="summary-card">
+                    <h3>Setup note</h3>
+                    <p>Start your local OWASP ZAP daemon first, then begin scanning from the workspace. If ZAP is offline, the app now surfaces that clearly instead of failing silently.</p>
+                </div>
+            </aside>
+        </section>
+    </main>
 </body>
 </html>
