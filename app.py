@@ -25,7 +25,7 @@ from flask import (
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from connection import connect_to_zap
+from connection import connect_to_zap, get_last_zap_connection_error
 from urllib3.exceptions import InsecureRequestWarning
 from flask_migrate import Migrate
 
@@ -33,6 +33,20 @@ try:
     from dotenv import load_dotenv
 except ImportError:
     def load_dotenv():
+        env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+        if not os.path.exists(env_path):
+            return False
+
+        with open(env_path, "r", encoding="utf-8") as env_file:
+            for raw_line in env_file:
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                if not key or key.startswith("$env:") or " " in key:
+                    continue
+                os.environ.setdefault(key, value.strip().strip('"').strip("'"))
         return False
 
 # Initialize Migrate
@@ -363,8 +377,12 @@ def start_scan():
 
     zap = connect_to_zap()
     if not zap:
-        log_message("ZAP connection failed. Start OWASP ZAP in daemon mode and try again.")
-        flash("Could not connect to OWASP ZAP. Start ZAP locally, then retry the scan.", "danger")
+        zap_error = get_last_zap_connection_error()
+        log_message(f"ZAP connection failed. {zap_error}")
+        if zap_error and "403" in zap_error:
+            flash("OWASP ZAP is running, but it rejected API access. Set ZAP_API_KEY in .env or disable the API key in ZAP, then restart Flask.", "danger")
+        else:
+            flash("Could not connect to OWASP ZAP. Check ZAP_PROXY_URL, port, and whether ZAP is running locally.", "danger")
         return redirect(url_for('index'))
 
     log_message(f"Connected to ZAP at {getattr(zap, 'proxy_url', 'unknown endpoint')}.")
